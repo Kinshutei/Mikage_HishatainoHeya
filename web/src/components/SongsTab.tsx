@@ -160,16 +160,29 @@ export default function SongsTab({ records }: Props) {
           <Plot
             key={treeKey}
             data={[{
-              type: 'treemap',
-              labels: years.map(([y]) => y),
-              parents: years.map(() => ''),
-              values: years.map(([, v]) => v),
-              text: years.map(([, v]) => `${(v / yearTotal * 100).toFixed(1)}%`),
-              texttemplate: '<b>%{label}</b><br>%{value}曲<br>%{text}',
-              hovertemplate: '<b>%{label}</b><br>%{value}曲 (%{text})<extra></extra>',
-              marker: { colors: years.map(([, v]) => v), colorscale: treeColorscale, line: { width: 2, color: '#ffffff' }, pad: { t: 22, l: 4, r: 4, b: 4 } },
+              type: 'bar',
+              x: years.map(([y]) => y),
+              y: years.map(([, v]) => v),
+              text: years.map(([, v]) => String(v)),
+              textposition: 'outside',
+              marker: {
+                color: years.map(([, v]) => v),
+                colorscale: [
+                  [0.0, '#111a2e'], [0.4, '#1e3050'], [0.7, '#2e5a8a'], [1.0, '#6b9fd4'],
+                ],
+                line: { width: 0 },
+              },
+              hovertemplate: '<b>%{x}</b><br>%{y}曲<extra></extra>',
             }]}
-            layout={{ paper_bgcolor: 'rgba(0,0,0,0)', font: { family: 'Noto Sans JP', color: '#c0c0c0' }, margin: { t: 4, l: 0, r: 0, b: 0 }, height: 380 }}
+            layout={{
+              paper_bgcolor: 'rgba(0,0,0,0)',
+              plot_bgcolor: 'rgba(0,0,0,0)',
+              font: { family: 'Noto Sans JP', color: '#a0a0a0', size: 12 },
+              xaxis: { showgrid: false, color: '#606060', tickangle: -45, tickfont: { size: 11 } },
+              yaxis: { showgrid: true, gridcolor: 'rgba(255,255,255,0.05)', zeroline: false, color: '#606060' },
+              margin: { l: 40, r: 20, t: 24, b: 60 },
+              height: 320,
+            }}
             config={{ displayModeBar: false, responsive: true }}
             style={{ width: '100%' }}
             useResizeHandler
