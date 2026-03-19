@@ -2,38 +2,31 @@ const LILY_GROUP = `${import.meta.env.BASE_URL}spiderlily_group.png`
 
 export default function Footer() {
   return (
-    <div style={{
-      position: 'fixed',
-      bottom: 0,
-      left: 0,
-      right: 0,
-      zIndex: 10,       // コンテンツ(z-index:100)より低い
-      pointerEvents: 'none',
-    }}>
-      {/* 彼岸花群生：茎の下端をフッターバー上端に合わせる */}
+    <>
+      {/* 彼岸花：position:fixed で直接ビューポート基準 */}
       <img
         src={LILY_GROUP}
         alt=""
         style={{
-          position: 'absolute',
+          position: 'fixed',
           bottom: 54,
-          left: '50%',
-          transform: 'translateX(-50%)',
+          left: 0,
           width: '100vw',
-          minWidth: '100%',
-          maxWidth: 'none',
           height: 'auto',
           opacity: 0.45,
-          animation: 'sway 5s ease-in-out infinite',
-          transformOrigin: 'bottom center',
+          zIndex: 9,
           pointerEvents: 'none',
+          transformOrigin: 'bottom center',
+          animation: 'sway 5s ease-in-out infinite',
         }}
       />
 
       {/* フッターバー */}
       <footer style={{
-        position: 'relative',
-        zIndex: 10,
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
         height: 54,
         display: 'flex',
         alignItems: 'center',
@@ -44,6 +37,7 @@ export default function Footer() {
         color: 'rgb(112, 112, 112)',
         letterSpacing: '0.06em',
         fontFamily: '"Noto Sans JP", sans-serif',
+        zIndex: 10,
         pointerEvents: 'auto',
       }}>
         <span className="footer-full">
@@ -63,6 +57,6 @@ export default function Footer() {
           © 2026 金鷲亭　|　深影（Mikage / RK Music）非公式ファンサイト
         </span>
       </footer>
-    </div>
+    </>
   )
 }
