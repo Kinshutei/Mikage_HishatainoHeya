@@ -1,15 +1,19 @@
 import { useState, useEffect } from 'react'
 import { StreamingRecord } from './types'
-import { parseCSV } from './utils/csv'
+import { parseCSV, parseSongMaster } from './utils/csv'
 import StreamsTab from './components/StreamsTab'
 import SongsTab from './components/SongsTab'
 import AboutTab from './components/AboutTab'
 import ChangelogTab from './components/ChangelogTab'
 import './App.css'
 
-const CSV_URL =
+const STREAMING_CSV_URL =
   import.meta.env.VITE_CSV_URL ??
-  'https://raw.githubusercontent.com/Kinshutei/Mikage_HishatainoHeya/main/streaming_info_mikage.csv'
+  'https://raw.githubusercontent.com/Kinshutei/Mikage_HishatainoHeya/main/streaminginfo_Mikage.csv'
+
+const SONG_MASTER_URL =
+  import.meta.env.VITE_MASTER_URL ??
+  'https://raw.githubusercontent.com/Kinshutei/Mikage_HishatainoHeya/main/song_master.csv'
 
 const BANNER_URL =
   'https://yt3.googleusercontent.com/6REyrT4s7DrjAvRL0yJUJJxi3Ahb59XtcnnDNpu7lC7sojUKthxvBIWJDVSyExFi1BOyJPzZWg' +
@@ -26,19 +30,33 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('streams')
 
   useEffect(() => {
-    fetch(CSV_URL)
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`)
-        return r.text()
-      })
-      .then((text) => {
-        setRecords(parseCSV(text))
-        setLoading(false)
-      })
-      .catch((e: unknown) => {
+    const fetchAll = async () => {
+      try {
+        // 楽曲マスターと配信情報を並行ロード
+        const [masterRes, streamRes] = await Promise.all([
+          fetch(SONG_MASTER_URL),
+          fetch(STREAMING_CSV_URL),
+        ])
+
+        if (!masterRes.ok) throw new Error(`song_master HTTP ${masterRes.status}`)
+        if (!streamRes.ok) throw new Error(`streaming_info HTTP ${streamRes.status}`)
+
+        const [masterText, streamText] = await Promise.all([
+          masterRes.text(),
+          streamRes.text(),
+        ])
+
+        const masterMap = parseSongMaster(masterText)
+        const parsed = parseCSV(streamText, masterMap)
+        setRecords(parsed)
+      } catch (e: unknown) {
         setError(String(e))
+      } finally {
         setLoading(false)
-      })
+      }
+    }
+
+    fetchAll()
   }, [])
 
   return (
