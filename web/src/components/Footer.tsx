@@ -1,17 +1,4 @@
-const LILY = `${import.meta.env.BASE_URL}spiderlily.png`
-
-const FLOWERS = [
-  { left: '2%',   height: 110, delay: 0.0, duration: 4.2, initRot: -4  },
-  { left: '6%',   height: 145, delay: 0.8, duration: 3.8, initRot:  3  },
-  { left: '11%',  height:  90, delay: 1.6, duration: 4.6, initRot: -7  },
-  { left: '17%',  height: 125, delay: 0.4, duration: 4.0, initRot:  5  },
-  { left: '23%',  height:  80, delay: 1.2, duration: 3.6, initRot: -2  },
-  { left: '75%',  height:  85, delay: 1.0, duration: 4.4, initRot:  4  },
-  { left: '81%',  height: 130, delay: 0.2, duration: 3.9, initRot: -6  },
-  { left: '87%',  height:  95, delay: 1.8, duration: 4.1, initRot:  2  },
-  { left: '92%',  height: 140, delay: 0.6, duration: 4.7, initRot: -3  },
-  { left: '97%',  height:  75, delay: 1.4, duration: 3.7, initRot:  7  },
-]
+const LILY_GROUP = `${import.meta.env.BASE_URL}spiderlily_group.png`
 
 export default function Footer() {
   return (
@@ -20,33 +7,32 @@ export default function Footer() {
       bottom: 0,
       left: 0,
       right: 0,
-      zIndex: 200,
+      zIndex: 10,       // コンテンツ(z-index:100)より低い
       pointerEvents: 'none',
     }}>
-      {/* 彼岸花群生 */}
-      {FLOWERS.map((f, i) => (
-        <img
-          key={i}
-          src={LILY}
-          alt=""
-          style={{
-            position: 'absolute',
-            bottom: 54,
-            left: f.left,
-            height: f.height,
-            width: 'auto',
-            mixBlendMode: 'screen',
-            opacity: 0.55,
-            transformOrigin: 'bottom center',
-            animation: `sway ${f.duration}s ease-in-out ${f.delay}s infinite`,
-            transform: `rotate(${f.initRot}deg)`,
-            pointerEvents: 'none',
-          }}
-        />
-      ))}
+      {/* 彼岸花群生：茎の下端をフッターバー上端に合わせる */}
+      <img
+        src={LILY_GROUP}
+        alt=""
+        style={{
+          position: 'absolute',
+          bottom: 54,           // フッターバーの高さ分上
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '100%',
+          maxWidth: 1400,
+          height: 'auto',
+          opacity: 0.45,
+          animation: 'sway 5s ease-in-out infinite',
+          transformOrigin: 'bottom center',
+          pointerEvents: 'none',
+        }}
+      />
 
       {/* フッターバー */}
       <footer style={{
+        position: 'relative',
+        zIndex: 10,
         height: 54,
         display: 'flex',
         alignItems: 'center',
