@@ -4,7 +4,8 @@ on:
   push:
     branches: [main]
     paths:
-      - 'streaming_info.csv'
+      - 'streaminginfo_Mikage.csv'
+      - 'song_master.csv'
       - 'web/**'
   workflow_dispatch:
 
@@ -40,7 +41,8 @@ jobs:
         run: npm run build
         working-directory: web
         env:
-          VITE_CSV_URL: https://raw.githubusercontent.com/${{ github.repository }}/main/streaming_info.csv
+          VITE_CSV_URL: https://raw.githubusercontent.com/${{ github.repository }}/main/streaminginfo_Mikage.csv
+          VITE_MASTER_URL: https://raw.githubusercontent.com/${{ github.repository }}/main/song_master.csv
 
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -55,4 +57,3 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
-
