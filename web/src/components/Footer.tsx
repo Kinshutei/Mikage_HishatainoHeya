@@ -1,8 +1,24 @@
 const LILY_GROUP = `${import.meta.env.BASE_URL}spiderlily_group.png`
+const LILY_LEFT  = `${import.meta.env.BASE_URL}spiderlily_left.png`
 
 export default function Footer() {
   return (
     <>
+      {/* 左端の彼岸花 */}
+      <img
+        src={LILY_LEFT}
+        alt=""
+        style={{
+          position: 'fixed',
+          bottom: 54,
+          left: 0,
+          height: 100,
+          width: 'auto',
+          zIndex: 9,
+          pointerEvents: 'none',
+        }}
+      />
+
       {/* 彼岸花：position:fixed で直接ビューポート基準 */}
       <img
         src={LILY_GROUP}
@@ -16,8 +32,6 @@ export default function Footer() {
           opacity: 0.45,
           zIndex: 9,
           pointerEvents: 'none',
-          transformOrigin: 'bottom center',
-          animation: 'sway 5s ease-in-out infinite',
         }}
       />
 
