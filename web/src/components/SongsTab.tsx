@@ -52,7 +52,6 @@ export default function SongsTab({ records }: Props) {
     yearMap.set(s.リリース年, (yearMap.get(s.リリース年) ?? 0) + 1)
   }
   const years = Array.from(yearMap.entries()).sort((a, b) => a[0].localeCompare(b[0]))
-  const yearTotal = years.reduce((sum, [, v]) => sum + v, 0)
 
   const artistMap = new Map<string, number>()
   for (const s of songs) {
