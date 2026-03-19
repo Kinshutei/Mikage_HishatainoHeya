@@ -726,13 +726,7 @@ def main():
 
     joined, streaming, master = get_data()
 
-    tab1, tab2, tab3 = st.tabs(["LiveStreaming Info", "Uta-Mita DB", "データ管理"])
-    with tab1:
-        page_streams(joined)
-    with tab2:
-        page_songs(joined)
-    with tab3:
-        page_data_management(streaming, master)
+    page_data_management(streaming, master)
 
 
 if __name__ == "__main__":
