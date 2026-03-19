@@ -190,11 +190,14 @@ function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, set
                 </thead>
                 <tbody>
                   {setlist.map((r, i) => {
-                    const isHit = query.length > 0 && (r.楽曲名.toLowerCase().includes(query.toLowerCase()) || r.原曲Artist.toLowerCase().includes(query.toLowerCase()))
+                    const q = query.toLowerCase()
+                    const hitTitle  = query.length > 0 && r.楽曲名.toLowerCase().includes(q)
+                    const hitArtist = query.length > 0 && r.原曲Artist.toLowerCase().includes(q)
+                    const isHit = hitTitle || hitArtist
                     return (
                       <tr key={i} style={isHit ? { backgroundColor: 'rgba(107,159,212,0.12)' } : undefined}>
                         <td>{r.歌唱順}</td>
-                        <td style={isHit ? { fontWeight: 600, color: '#6b9fd4' } : undefined}>
+                        <td style={hitTitle ? { fontWeight: 600, color: '#6b9fd4' } : undefined}>
                           {(() => {
                             const fa = firstAppearance.get(r.楽曲名)
                             const isFirst = fa?.枠名 === r.枠名 && fa?.歌唱順 === r.歌唱順
@@ -210,7 +213,7 @@ function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, set
                             ) : r.楽曲名
                           })()}
                         </td>
-                        <td style={{ color: r.原曲Artist.toLowerCase().includes(query.toLowerCase()) && query.length > 0 ? '#6b9fd4' : '#888888', fontWeight: r.原曲Artist.toLowerCase().includes(query.toLowerCase()) && query.length > 0 ? 600 : undefined }}>{r.原曲Artist}</td>
+                        <td style={{ color: hitArtist ? '#6b9fd4' : '#888888', fontWeight: hitArtist ? 600 : undefined }}>{r.原曲Artist}</td>
                         <td>
                           {r.枠URL && (
                             <a href={r.枠URL} target="_blank" rel="noopener noreferrer" style={{ color: '#5a7fa8' }}>
