@@ -9,7 +9,7 @@ import re
 # ─────────────────────────────────────────
 # 定数
 # ─────────────────────────────────────────
-CSV_COLUMNS = ["枠名", "楽曲名", "歌唱順", "配信日", "枠URL", "コラボ相手様", "原曲Artist", "作詞", "作曲", "リリース日"]
+CSV_COLUMNS = ["枠名", "song_id", "歌唱順", "配信日", "枠URL", "コラボ相手様"]
 
 BANNER_URL = (
     "https://yt3.googleusercontent.com/6REyrT4s7DrjAvRL0yJUJJxi3Ahb59XtcnnDNpu7lC7sojUKthxvBIWJDVSyExFi1BOyJPzZWg"
@@ -37,7 +37,7 @@ def load_df() -> pd.DataFrame:
     empty = pd.DataFrame(columns=CSV_COLUMNS)
     if not _gh_secrets_ok():
         try:
-            df = pd.read_csv("streaming_info_mikage.csv", encoding="utf-8-sig")
+            df = pd.read_csv("streaminginfo_Mikage.csv", encoding="utf-8-sig")
             return _normalize_df(df)
         except FileNotFoundError:
             return empty
@@ -59,7 +59,7 @@ def load_df() -> pd.DataFrame:
 
 def push_df(df: pd.DataFrame, commit_msg: str = "Update streaming data") -> tuple[bool, str]:
     if not _gh_secrets_ok():
-        df.to_csv("streaming_info_mikage.csv", index=False, encoding="utf-8-sig")
+        df.to_csv("streaminginfo_Mikage.csv", index=False, encoding="utf-8-sig")
         return True, "ローカルファイルに保存しました。"
     repo   = st.secrets["github_repo"]
     path   = st.secrets["github_csv_path"]
@@ -90,11 +90,8 @@ def _normalize_df(df: pd.DataFrame) -> pd.DataFrame:
     df["歌唱順"] = pd.to_numeric(df["歌唱順"], errors="coerce").fillna(0).astype(int)
     df["配信日"] = df["配信日"].apply(_parse_date)
     df["コラボ相手様"] = df["コラボ相手様"].fillna("なし").astype(str)
-    for col in ["枠URL", "原曲Artist", "作詞", "作曲"]:
-        df[col] = df[col].fillna("").astype(str)
-    df["リリース日"] = df["リリース日"].apply(
-        lambda v: "" if pd.isna(v) or str(v).strip() in ("", "nan", "NaN") else str(v).strip()
-    )
+    df["枠URL"] = df["枠URL"].fillna("").astype(str)
+    df["song_id"] = df["song_id"].fillna("").astype(str)
     return df
 
 def _parse_date(val) -> str:
@@ -208,15 +205,11 @@ def convert_excel_to_df(raw: bytes) -> tuple:
 
             rows.append({
                 "枠名":       frame_key,
-                "楽曲名":     song_title,
+                "song_id":    "",  # Excelインポート後は song_master と突合して手動設定
                 "歌唱順":     idx + 1,
                 "配信日":     date_str,
                 "枠URL":      frame_url,
                 "コラボ相手様": "なし",
-                "原曲Artist": artist,
-                "作詞":       song_info.get("作詞", ""),
-                "作曲":       song_info.get("作曲", ""),
-                "リリース日": song_info.get("リリース日", ""),
             })
 
     if not rows:
@@ -489,7 +482,7 @@ def page_data_management(df: pd.DataFrame):
         st.subheader("📤 CSVエクスポート")
         from datetime import date as _date
         csv_bytes = df.to_csv(index=False).encode("utf-8-sig")
-        csv_filename = f"streaming_info_mikage_{_date.today().strftime('%Y%m%d')}.csv"
+        csv_filename = f"streaminginfo_Mikage_{_date.today().strftime('%Y%m%d')}.csv"
         st.download_button(
             label="⬇️ CSVダウンロード",
             data=csv_bytes,
