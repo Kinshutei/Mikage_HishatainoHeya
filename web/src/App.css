@@ -251,10 +251,9 @@ a:hover { color: #9bbde0; }
 
 /* ── 彼岸花 揺れアニメーション ── */
 @keyframes sway {
-  0%   { transform: rotate(var(--ir, -4deg)) translateX(0px); }
-  25%  { transform: rotate(calc(var(--ir, -4deg) + 4deg)) translateX(2px); }
-  75%  { transform: rotate(calc(var(--ir, -4deg) - 4deg)) translateX(-2px); }
-  100% { transform: rotate(var(--ir, -4deg)) translateX(0px); }
+  0%   { rotate: -2deg; }
+  50%  { rotate:  2deg; }
+  100% { rotate: -2deg; }
 }
 
 /* ── フッター ── */
