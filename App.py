@@ -41,7 +41,7 @@ def _gh_branch() -> str:
     return st.secrets.get("github_branch", "main")
 
 def _gh_master_path() -> str:
-    return st.secrets.get("github_master_path", "song_master.csv")
+    return st.secrets.get("github_master_path", "song_master_Mikage.csv")
 
 def _gh_fetch_csv(path: str) -> pd.DataFrame | None:
     """GitHubから指定パスのCSVを取得してDataFrameで返す。失敗時はNone。"""
@@ -88,7 +88,7 @@ def load_master_df() -> pd.DataFrame:
     empty = pd.DataFrame(columns=MASTER_COLUMNS)
     if not _gh_secrets_ok():
         try:
-            df = pd.read_csv("song_master.csv", encoding="utf-8-sig")
+            df = pd.read_csv("song_master_Mikage.csv", encoding="utf-8-sig")
             return _normalize_master(df)
         except FileNotFoundError:
             return empty
@@ -97,7 +97,7 @@ def load_master_df() -> pd.DataFrame:
 
 def push_master_df(df: pd.DataFrame, commit_msg: str = "Update song master") -> tuple[bool, str]:
     if not _gh_secrets_ok():
-        df.to_csv("song_master.csv", index=False, encoding="utf-8-sig")
+        df.to_csv("song_master_Mikage.csv", index=False, encoding="utf-8-sig")
         return True, "ローカルファイルに保存しました。"
     return _gh_push_csv(df, _gh_master_path(), commit_msg)
 
@@ -505,7 +505,7 @@ def page_data_management(streaming: pd.DataFrame, master: pd.DataFrame):
 
     # ── タブ1：楽曲マスター ──
     with mgmt_tab1:
-        st.subheader("📋 楽曲マスター（song_master.csv）")
+        st.subheader("📋 楽曲マスター")
         st.caption(f"{len(master)} 曲登録済み")
         if not master.empty:
             st.dataframe(
@@ -519,11 +519,13 @@ def page_data_management(streaming: pd.DataFrame, master: pd.DataFrame):
         with col_ex:
             st.subheader("📤 マスターCSVエクスポート")
             from datetime import date as _date
+            from datetime import date as _date
             master_bytes = master.to_csv(index=False).encode("utf-8-sig")
+            master_filename = f"song_master_Mikage_{_date.today().strftime('%Y%m%d')}.csv"
             st.download_button(
-                label="⬇️ song_master.csv ダウンロード",
+                label="⬇️ CSVダウンロード",
                 data=master_bytes,
-                file_name="song_master.csv",
+                file_name=master_filename,
                 mime="text/csv",
                 use_container_width=True,
             )
@@ -531,7 +533,7 @@ def page_data_management(streaming: pd.DataFrame, master: pd.DataFrame):
             st.subheader("📥 マスターCSVインポート（完全上書き）")
             st.warning("⚠️ インポートすると既存マスターは全て置き換えられます。", icon="⚠️")
             uploaded_master = st.file_uploader(
-                "song_master.csv を選択", type=["csv"], key="import_master"
+                "song_master_Mikage_yyyymmdd.csv を選択", type=["csv"], key="import_master"
             )
             if uploaded_master:
                 if st.button("🔁 マスターインポート実行", use_container_width=True, type="primary"):
