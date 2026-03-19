@@ -34,6 +34,9 @@ export default function StreamsTab({ records }: Props) {
       )
     : streams
 
+  // オプション列：コラボ相手様（データが1件以上ある場合のみ表示）
+  const hasCollab = records.some((r) => r.コラボ相手様 && r.コラボ相手様 !== 'なし' && r.コラボ相手様 !== '')
+
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
@@ -63,20 +66,11 @@ export default function StreamsTab({ records }: Props) {
             <button
               onClick={() => setQuery('')}
               style={{
-                position: 'absolute',
-                right: '10px',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                color: '#aaa',
-                fontSize: '14px',
-                lineHeight: 1,
-                padding: '0',
+                position: 'absolute', right: '10px', background: 'none', border: 'none',
+                cursor: 'pointer', color: '#aaa', fontSize: '14px', lineHeight: 1, padding: '0',
               }}
               title="クリア"
-            >
-              ✕
-            </button>
+            >✕</button>
           )}
         </div>
         {isSearching && (
@@ -106,6 +100,11 @@ export default function StreamsTab({ records }: Props) {
           const thumbUrl = videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : null
           const cleanUrl = videoId ? `https://www.youtube.com/live/${videoId}` : stream.枠URL
 
+          // この枠でコラボがあるか
+          const frameHasCollab = hasCollab && setlist.some(
+            (r) => r.コラボ相手様 && r.コラボ相手様 !== 'なし' && r.コラボ相手様 !== ''
+          )
+
           return (
             <StreamExpander
               key={`${stream.枠名}_${stream.配信日}_${mountKey}`}
@@ -116,6 +115,7 @@ export default function StreamsTab({ records }: Props) {
               cleanUrl={cleanUrl}
               setlist={setlist}
               query={trimmedQuery}
+              showCollab={frameHasCollab}
             />
           )
         })}
@@ -132,9 +132,10 @@ interface ExpanderProps {
   cleanUrl: string
   setlist: StreamingRecord[]
   query: string
+  showCollab: boolean
 }
 
-function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, setlist, query }: ExpanderProps) {
+function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, setlist, query, showCollab }: ExpanderProps) {
   const [localOpen, setLocalOpen] = useState(defaultOpen)
   const isOpen = forceOpen || localOpen
 
@@ -171,8 +172,9 @@ function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, set
                   <tr>
                     <th>#</th>
                     <th>楽曲名</th>
-                    <th>コラボ相手様</th>
+                    <th>原曲アーティスト</th>
                     <th>URL</th>
+                    {showCollab && <th>コラボ相手様</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -180,9 +182,9 @@ function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, set
                     const isHit = query.length > 0 && r.楽曲名.toLowerCase().includes(query.toLowerCase())
                     return (
                       <tr key={i} style={isHit ? { backgroundColor: 'rgba(107,159,212,0.12)' } : undefined}>
-                        <td style={{ textAlign: 'center', color: '#606060' }}>{r.歌唱順}</td>
+                        <td>{r.歌唱順}</td>
                         <td style={isHit ? { fontWeight: 600, color: '#6b9fd4' } : undefined}>{r.楽曲名}</td>
-                        <td style={{ color: '#888888' }}>{r.コラボ相手様 === 'なし' ? '' : r.コラボ相手様}</td>
+                        <td style={{ color: '#888888' }}>{r.原曲Artist}</td>
                         <td>
                           {r.枠URL && (
                             <a href={r.枠URL} target="_blank" rel="noopener noreferrer" style={{ color: '#5a7fa8' }}>
@@ -190,6 +192,9 @@ function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, set
                             </a>
                           )}
                         </td>
+                        {showCollab && (
+                          <td style={{ color: '#888888' }}>{r.コラボ相手様 === 'なし' ? '' : r.コラボ相手様}</td>
+                        )}
                       </tr>
                     )
                   })}
