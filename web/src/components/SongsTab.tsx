@@ -16,7 +16,6 @@ const COLUMNS: { key: SortKey; label: string }[] = [
   { key: '作詞', label: '作詞' },
   { key: '作曲', label: '作曲' },
   { key: 'リリース日', label: 'リリース日' },
-  { key: 'リリース年', label: 'リリース年' },
   { key: '歌唱回数', label: '歌唱回数' },
 ]
 
@@ -114,7 +113,6 @@ export default function SongsTab({ records }: Props) {
                 <td style={{ color: '#666' }}>{s.作詞}</td>
                 <td style={{ color: '#666' }}>{s.作曲}</td>
                 <td style={{ color: '#666' }}>{s.リリース日}</td>
-                <td style={{ color: '#666' }}>{s.リリース年}</td>
                 <td style={{ textAlign: 'center', fontWeight: 600, color: '#6b9fd4' }}>{s.歌唱回数}</td>
               </tr>
             ))}
