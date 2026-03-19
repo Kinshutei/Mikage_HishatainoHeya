@@ -210,7 +210,7 @@ function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, set
                             ) : r.楽曲名
                           })()}
                         </td>
-                        <td style={{ color: '#888888' }}>{r.原曲Artist}</td>
+                        <td style={{ color: r.原曲Artist.toLowerCase().includes(query.toLowerCase()) && query.length > 0 ? '#6b9fd4' : '#888888', fontWeight: r.原曲Artist.toLowerCase().includes(query.toLowerCase()) && query.length > 0 ? 600 : undefined }}>{r.原曲Artist}</td>
                         <td>
                           {r.枠URL && (
                             <a href={r.枠URL} target="_blank" rel="noopener noreferrer" style={{ color: '#5a7fa8' }}>
