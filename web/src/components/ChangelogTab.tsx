@@ -1,6 +1,13 @@
 export default function ChangelogTab() {
   const entries = [
     {
+      date: '2026-03-21',
+      items: [
+        'モバイル向け改修。LiveStreaming Info・Uta-Mita DB・更新履歴タブの切り替えをプルダウン形式に変更。',
+        'モバイル向け改修。Uta-Mita DB の楽曲一覧は15曲まで表示し、それ以降はスクロール方式に変更。',
+      ],
+    },
+    {
       date: '2026-03-20',
       items: [
         'LiveStreaming Info タブ › 検索フォームの改善。楽曲名または原曲アーティストで該当がないか検索するよう変更。※従来は楽曲名のみ反応。',

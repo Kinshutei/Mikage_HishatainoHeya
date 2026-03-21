@@ -286,6 +286,8 @@ a:hover { color: #9bbde0; }
   .tabs-mobile {
     display: flex;
     justify-content: center;
+    align-items: center;
+    width: 100%;
     padding: 10px 16px;
     border-bottom: 1px solid #242424;
     background: #0e0e0e;
