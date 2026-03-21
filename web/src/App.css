@@ -241,12 +241,61 @@ h3 {
 a { color: #6b9fd4; }
 a:hover { color: #9bbde0; }
 
+/* モバイル・デスクトップ切り替え */
+.tabs-mobile { display: none; }
+.tabs-desktop { display: flex; }
+
+/* モバイルプルダウン */
+.mobile-tab-select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.select-arrow {
+  color: #6b9fd4;
+  font-size: 0.85rem;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+.mobile-tab-select select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: #161616;
+  border: 1px solid #2e2e2e;
+  border-radius: 6px;
+  padding: 8px 16px 8px 12px;
+  font-family: 'Zen Kaku Gothic New', 'Noto Sans JP', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #6b9fd4;
+  cursor: pointer;
+  outline: none;
+  min-width: 200px;
+}
+.mobile-tab-select select:focus {
+  border-color: #6b9fd4;
+}
+
 @media (max-width: 600px) {
   .expander-body > div {
     grid-template-columns: 1fr !important;
   }
-  .tabs { gap: 0; }
-  .tab-btn { font-size: 1.0rem; padding: 12px 14px; }
+  .tabs-desktop { display: none; }
+  .tabs-mobile {
+    display: flex;
+    justify-content: center;
+    padding: 10px 16px;
+    border-bottom: 1px solid #242424;
+    background: #0e0e0e;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .songs-table-wrap {
+    max-height: calc(15 * 38px + 42px); /* モバイルは15行まで */
+  }
 }
 
 

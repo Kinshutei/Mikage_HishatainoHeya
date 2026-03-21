@@ -67,8 +67,8 @@ export default function App() {
         <img src={BANNER_URL} alt="深影 バナー" />
       </div>
 
-      {/* タブ */}
-      <div className="tabs">
+      {/* タブ（デスクトップ） */}
+      <div className="tabs tabs-desktop">
         <button
           className={`tab-btn ${activeTab === 'streams' ? 'active' : ''}`}
           onClick={() => setActiveTab('streams')}
@@ -97,6 +97,22 @@ export default function App() {
           <img src={MIKAGE_ICON} alt="" className="tab-icon" />
           更新履歴
         </button>
+      </div>
+
+      {/* タブ（モバイル：プルダウン） */}
+      <div className="tabs tabs-mobile">
+        <div className="mobile-tab-select">
+          <span className="select-arrow">▼</span>
+          <select
+            value={activeTab}
+            onChange={e => setActiveTab(e.target.value as Tab)}
+          >
+            <option value="streams">LiveStreaming Info</option>
+            <option value="songs">Uta-Mita DB</option>
+            <option value="about">About</option>
+            <option value="changelog">更新履歴</option>
+          </select>
+        </div>
       </div>
 
       {/* コンテンツ */}
