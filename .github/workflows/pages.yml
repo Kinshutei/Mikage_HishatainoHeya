@@ -7,6 +7,7 @@ on:
       - 'streaminginfo_Mikage.csv'
       - 'rkmusic_song_master.csv'
       - 'web/**'
+      - '.github/workflows/pages.yml'
   workflow_dispatch:
 
 permissions:
