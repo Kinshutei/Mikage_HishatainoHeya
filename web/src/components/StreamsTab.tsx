@@ -1,22 +1,27 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StreamingRecord } from '../types'
 import { extractYtVideoId } from '../utils/csv'
+import { localizeField } from '../utils/localize'
 
 interface Props {
   records: StreamingRecord[]
 }
 
 export default function StreamsTab({ records }: Props) {
+  const { t, i18n } = useTranslation()
+  const lang = i18n.language
   const [defaultOpen, setDefaultOpen] = useState(false)
   const [mountKey, setMountKey] = useState(0)
   const [query, setQuery] = useState('')
 
   if (records.length === 0) {
-    return <p style={{ color: '#888', padding: '1rem' }}>配信枠がまだ登録されていません。</p>
+    return <p style={{ color: '#888', padding: '1rem' }}>{t('streams.empty')}</p>
   }
 
   const trimmedQuery = query.trim()
   const isSearching = trimmedQuery.length > 0
+  const q = trimmedQuery.toLowerCase()
 
   const streams = Array.from(
     new Map(
@@ -30,11 +35,14 @@ export default function StreamsTab({ records }: Props) {
     ? streams.filter((stream) =>
         records
           .filter((r) => r.枠名 === stream.枠名)
-          .some((r) => r.楽曲名.toLowerCase().includes(trimmedQuery.toLowerCase()) || r.原曲Artist.toLowerCase().includes(trimmedQuery.toLowerCase()))
+          .some((r) => {
+            const title  = localizeField(r.楽曲名, r.楽曲名_en, r.楽曲名_ko, r.楽曲名_zh, lang).toLowerCase()
+            const artist = localizeField(r.原曲Artist, r.原曲Artist_en, r.原曲Artist_ko, r.原曲Artist_zh, lang).toLowerCase()
+            return title.includes(q) || artist.includes(q)
+          })
       )
     : streams
 
-  // 楽曲ごとの初回歌唱を特定（配信日昇順で最初のレコード）
   const firstAppearance = new Map<string, { 枠名: string; 歌唱順: number }>()
   const sorted = [...records].sort((a, b) => a.配信日.localeCompare(b.配信日) || a.歌唱順 - b.歌唱順)
   for (const r of sorted) {
@@ -43,7 +51,6 @@ export default function StreamsTab({ records }: Props) {
     }
   }
 
-  // オプション列：コラボ相手様（データが1件以上ある場合のみ表示）
   const hasCollab = records.some((r) => r.コラボ相手様 && r.コラボ相手様 !== 'なし' && r.コラボ相手様 !== '')
 
   return (
@@ -55,7 +62,7 @@ export default function StreamsTab({ records }: Props) {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="曲名で検索..."
+            placeholder={t('streams.searchPlaceholder')}
             style={{
               width: '100%',
               padding: '7px 36px 7px 32px',
@@ -84,32 +91,36 @@ export default function StreamsTab({ records }: Props) {
         </div>
         {isSearching && (
           <span style={{ fontSize: '13px', color: '#606060' }}>
-            {filteredStreams.length} 件の枠がヒット
+            {t('streams.searchHits', { count: filteredStreams.length })}
           </span>
         )}
         {!isSearching && (
           <>
-            <button className="btn-secondary" onClick={() => { setDefaultOpen(true); setMountKey((k) => k + 1) }}>▼ 全て開く</button>
-            <button className="btn-secondary" onClick={() => { setDefaultOpen(false); setMountKey((k) => k + 1) }}>▲ 全て閉じる</button>
+            <button className="btn-secondary" onClick={() => { setDefaultOpen(true); setMountKey((k) => k + 1) }}>{t('streams.expandAll')}</button>
+            <button className="btn-secondary" onClick={() => { setDefaultOpen(false); setMountKey((k) => k + 1) }}>{t('streams.collapseAll')}</button>
           </>
         )}
       </div>
 
       {filteredStreams.length === 0 && isSearching && (
-        <p style={{ color: '#606060', fontSize: '14px' }}>「{trimmedQuery}」を含む枠が見つかりませんでした。</p>
+        <p style={{ color: '#606060', fontSize: '14px' }}>{t('streams.searchNoResults', { query: trimmedQuery })}</p>
       )}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
         {filteredStreams.map((stream) => {
           const setlist = records
             .filter((r) => r.枠名 === stream.枠名)
-            .filter((r) => !isSearching || r.楽曲名.toLowerCase().includes(trimmedQuery.toLowerCase()) || r.原曲Artist.toLowerCase().includes(trimmedQuery.toLowerCase()))
+            .filter((r) => {
+              if (!isSearching) return true
+              const title  = localizeField(r.楽曲名, r.楽曲名_en, r.楽曲名_ko, r.楽曲名_zh, lang).toLowerCase()
+              const artist = localizeField(r.原曲Artist, r.原曲Artist_en, r.原曲Artist_ko, r.原曲Artist_zh, lang).toLowerCase()
+              return title.includes(q) || artist.includes(q)
+            })
             .sort((a, b) => a.歌唱順 - b.歌唱順)
           const videoId = extractYtVideoId(stream.枠URL)
           const thumbUrl = videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : null
           const cleanUrl = videoId ? `https://www.youtube.com/live/${videoId}` : stream.枠URL
 
-          // この枠でコラボがあるか
           const frameHasCollab = hasCollab && setlist.some(
             (r) => r.コラボ相手様 && r.コラボ相手様 !== 'なし' && r.コラボ相手様 !== ''
           )
@@ -126,6 +137,7 @@ export default function StreamsTab({ records }: Props) {
               query={trimmedQuery}
               showCollab={frameHasCollab}
               firstAppearance={firstAppearance}
+              lang={lang}
             />
           )
         })}
@@ -144,11 +156,14 @@ interface ExpanderProps {
   query: string
   showCollab: boolean
   firstAppearance: Map<string, { 枠名: string; 歌唱順: number }>
+  lang: string
 }
 
-function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, setlist, query, showCollab, firstAppearance }: ExpanderProps) {
+function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, setlist, query, showCollab, firstAppearance, lang }: ExpanderProps) {
+  const { t } = useTranslation()
   const [localOpen, setLocalOpen] = useState(defaultOpen)
   const isOpen = forceOpen || localOpen
+  const q = query.toLowerCase()
 
   return (
     <div className="expander">
@@ -169,11 +184,11 @@ function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, set
                 <>
                   <img src={thumbUrl} alt="サムネイル" style={{ width: '100%', borderRadius: '6px' }} />
                   <a href={cleanUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', color: '#6b9fd4', display: 'block', marginTop: '4px' }}>
-                    ▶ YouTubeで開く
+                    {t('streams.openYouTube')}
                   </a>
                 </>
               ) : (
-                <span style={{ fontSize: '13px', color: '#484848' }}>サムネイルなし</span>
+                <span style={{ fontSize: '13px', color: '#484848' }}>{t('streams.noThumbnail')}</span>
               )}
             </div>
 
@@ -182,17 +197,18 @@ function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, set
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>楽曲名</th>
-                    <th>原曲アーティスト</th>
-                    <th>URL</th>
-                    {showCollab && <th>コラボ相手様</th>}
+                    <th>{t('streams.colSong')}</th>
+                    <th>{t('streams.colArtist')}</th>
+                    <th>{t('streams.colUrl')}</th>
+                    {showCollab && <th>{t('streams.colCollab')}</th>}
                   </tr>
                 </thead>
                 <tbody>
                   {setlist.map((r, i) => {
-                    const q = query.toLowerCase()
-                    const hitTitle  = query.length > 0 && r.楽曲名.toLowerCase().includes(q)
-                    const hitArtist = query.length > 0 && r.原曲Artist.toLowerCase().includes(q)
+                    const displayTitle  = localizeField(r.楽曲名, r.楽曲名_en, r.楽曲名_ko, r.楽曲名_zh, lang)
+                    const displayArtist = localizeField(r.原曲Artist, r.原曲Artist_en, r.原曲Artist_ko, r.原曲Artist_zh, lang)
+                    const hitTitle  = query.length > 0 && displayTitle.toLowerCase().includes(q)
+                    const hitArtist = query.length > 0 && displayArtist.toLowerCase().includes(q)
                     const isHit = hitTitle || hitArtist
                     return (
                       <tr key={i} style={isHit ? { backgroundColor: 'rgba(107,159,212,0.12)' } : undefined}>
@@ -207,17 +223,17 @@ function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, set
                                   fontSize: 10, fontWeight: 700, color: '#d4a843',
                                   border: '1px solid #d4a843', borderRadius: 3,
                                   padding: '1px 4px', letterSpacing: '0.05em', lineHeight: 1.4,
-                                }}>初</span>
-                                {r.楽曲名}
+                                }}>{t('streams.firstBadge')}</span>
+                                {displayTitle}
                               </span>
-                            ) : r.楽曲名
+                            ) : displayTitle
                           })()}
                         </td>
-                        <td style={{ color: hitArtist ? '#6b9fd4' : '#888888', fontWeight: hitArtist ? 600 : undefined }}>{r.原曲Artist}</td>
+                        <td style={{ color: hitArtist ? '#6b9fd4' : '#888888', fontWeight: hitArtist ? 600 : undefined }}>{displayArtist}</td>
                         <td>
                           {r.枠URL && (
                             <a href={r.枠URL} target="_blank" rel="noopener noreferrer" style={{ color: '#5a7fa8' }}>
-                              ▶ 開く
+                              {t('streams.openLink')}
                             </a>
                           )}
                         </td>

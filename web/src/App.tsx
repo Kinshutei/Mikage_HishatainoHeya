@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StreamingRecord } from './types'
 import { parseCSV, parseSongMaster } from './utils/csv'
+import { setLanguage } from './i18n'
 import StreamsTab from './components/StreamsTab'
 import SongsTab from './components/SongsTab'
 import AboutTab from './components/AboutTab'
@@ -24,7 +26,15 @@ const MIKAGE_ICON = `${import.meta.env.BASE_URL}icon_mikage.png`
 
 type Tab = 'streams' | 'songs' | 'about' | 'changelog'
 
+const LANGS = [
+  { value: 'ja',    label: '日本語' },
+  { value: 'en',    label: 'English' },
+  { value: 'ko',    label: '한국어' },
+  { value: 'zh-TW', label: '繁體中文' },
+]
+
 export default function App() {
+  const { t, i18n } = useTranslation()
   const [records, setRecords] = useState<StreamingRecord[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -33,7 +43,6 @@ export default function App() {
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        // 楽曲マスターと配信情報を並行ロード
         const [masterRes, streamRes] = await Promise.all([
           fetch(SONG_MASTER_URL),
           fetch(STREAMING_CSV_URL),
@@ -60,8 +69,31 @@ export default function App() {
     fetchAll()
   }, [])
 
+  const handleLangChange = (lang: string) => {
+    setLanguage(lang)
+  }
+
+  const langSelector = (
+    <div className="lang-selector">
+      <select
+        value={i18n.language}
+        onChange={e => handleLangChange(e.target.value)}
+        aria-label="Language"
+      >
+        {LANGS.map(l => (
+          <option key={l.value} value={l.value}>{l.label}</option>
+        ))}
+      </select>
+    </div>
+  )
+
   return (
     <div className="app">
+      {/* 言語セレクタ（デスクトップ：fixed 左上） */}
+      <div className="lang-selector-desktop">
+        {langSelector}
+      </div>
+
       {/* バナー */}
       <div className="banner">
         <img src={BANNER_URL} alt="深影 バナー" />
@@ -74,28 +106,28 @@ export default function App() {
           onClick={() => setActiveTab('streams')}
         >
           <img src={MIKAGE_ICON} alt="" className="tab-icon" />
-          LiveStreaming Info
+          {t('tab.streams')}
         </button>
         <button
           className={`tab-btn ${activeTab === 'songs' ? 'active' : ''}`}
           onClick={() => setActiveTab('songs')}
         >
           <img src={MIKAGE_ICON} alt="" className="tab-icon" />
-          Uta-Mita DB
+          {t('tab.songs')}
         </button>
         <button
           className={`tab-btn ${activeTab === 'about' ? 'active' : ''}`}
           onClick={() => setActiveTab('about')}
         >
           <img src={MIKAGE_ICON} alt="" className="tab-icon" />
-          About
+          {t('tab.about')}
         </button>
         <button
           className={`tab-btn ${activeTab === 'changelog' ? 'active' : ''}`}
           onClick={() => setActiveTab('changelog')}
         >
           <img src={MIKAGE_ICON} alt="" className="tab-icon" />
-          更新履歴
+          {t('tab.changelog')}
         </button>
       </div>
 
@@ -107,12 +139,14 @@ export default function App() {
             value={activeTab}
             onChange={e => setActiveTab(e.target.value as Tab)}
           >
-            <option value="streams">LiveStreaming Info</option>
-            <option value="songs">Uta-Mita DB</option>
-            <option value="about">About</option>
-            <option value="changelog">更新履歴</option>
+            <option value="streams">{t('tab.streams')}</option>
+            <option value="songs">{t('tab.songs')}</option>
+            <option value="about">{t('tab.about')}</option>
+            <option value="changelog">{t('tab.changelog')}</option>
           </select>
         </div>
+        {/* 言語セレクタ（モバイル：プルダウン右隣） */}
+        {langSelector}
       </div>
 
       {/* コンテンツ */}
@@ -123,8 +157,8 @@ export default function App() {
           <ChangelogTab />
         ) : (
           <>
-            {loading && <p style={{ color: '#888' }}>読み込み中...</p>}
-            {error && <p style={{ color: '#c00' }}>データの取得に失敗しました: {error}</p>}
+            {loading && <p style={{ color: '#888' }}>{t('loading')}</p>}
+            {error && <p style={{ color: '#c00' }}>{t('error', { error })}</p>}
             {!loading && !error && (
               <>
                 {activeTab === 'streams' && <StreamsTab records={records} />}

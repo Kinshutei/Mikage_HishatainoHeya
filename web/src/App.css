@@ -301,6 +301,50 @@ a:hover { color: #9bbde0; }
 }
 
 
+/* ── 言語セレクタ ── */
+.lang-selector {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.lang-selector select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(14, 14, 14, 0.75);
+  border: 1px solid #4a4a4a;
+  border-radius: 6px;
+  padding: 5px 24px 5px 10px;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 0.8rem;
+  color: #c0c0c0;
+  cursor: pointer;
+  outline: none;
+  backdrop-filter: blur(4px);
+  transition: border-color 0.15s, color 0.15s;
+}
+.lang-selector select:hover,
+.lang-selector select:focus {
+  border-color: #6b9fd4;
+  color: #e0e0e0;
+}
+.lang-selector::after {
+  content: '▼';
+  position: absolute;
+  right: 7px;
+  font-size: 0.6rem;
+  color: #a0a0a0;
+  pointer-events: none;
+}
+
+/* デスクトップ：バナー上に fixed 左上 */
+.lang-selector-desktop {
+  position: fixed;
+  top: 12px;
+  left: 16px;
+  z-index: 200;
+}
+
 /* ── フッター ── */
 .footer-full  { display: inline; }
 .footer-short { display: none; }

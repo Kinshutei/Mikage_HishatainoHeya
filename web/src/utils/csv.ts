@@ -16,11 +16,17 @@ export function parseSongMaster(text: string): Map<string, SongMaster> {
     if (!id) continue
     map.set(id, {
       song_id: id,
-      楽曲名: row['楽曲名'] ?? '',
-      原曲アーティスト: row['原曲アーティスト'] ?? '',
-      作詞: row['作詞'] ?? '',
-      作曲: row['作曲'] ?? '',
-      リリース日: row['リリース日'] ?? '',
+      楽曲名:             row['楽曲名'] ?? '',
+      楽曲名_en:          row['楽曲名_en'] || undefined,
+      楽曲名_ko:          row['楽曲名_ko'] || undefined,
+      楽曲名_zh:          row['楽曲名_zh'] || undefined,
+      原曲アーティスト:   row['原曲アーティスト'] ?? '',
+      原曲アーティスト_en: row['原曲アーティスト_en'] || undefined,
+      原曲アーティスト_ko: row['原曲アーティスト_ko'] || undefined,
+      原曲アーティスト_zh: row['原曲アーティスト_zh'] || undefined,
+      作詞:               row['作詞'] ?? '',
+      作曲:               row['作曲'] ?? '',
+      リリース日:         row['リリース日'] ?? '',
     })
   }
   return map
@@ -42,20 +48,24 @@ export function parseCSV(
     const songId = row['song_id']?.trim() ?? ''
     const master = masterMap.get(songId)
 
-    // 新形式（song_id あり）→ マスターから楽曲情報を補完
-    // 旧形式（song_id なし）→ 行内の値をそのまま使用（後方互換）
     return {
-      枠名:         row['枠名'] ?? '',
-      song_id:      songId,
-      楽曲名:       master?.楽曲名 ?? row['楽曲名'] ?? '',
-      歌唱順:       parseInt(row['歌唱順'] ?? '0', 10) || 0,
-      配信日:       normalizeDate(row['配信日'] ?? ''),
-      枠URL:        row['枠URL'] ?? '',
-      コラボ相手様: row['コラボ相手様'] ?? 'なし',
-      原曲Artist:   master?.原曲アーティスト ?? row['原曲Artist'] ?? '',
-      作詞:         master?.作詞 ?? row['作詞'] ?? '',
-      作曲:         master?.作曲 ?? row['作曲'] ?? '',
-      リリース日:   master?.リリース日 ?? row['リリース日'] ?? '',
+      枠名:              row['枠名'] ?? '',
+      song_id:           songId,
+      楽曲名:            master?.楽曲名 ?? row['楽曲名'] ?? '',
+      楽曲名_en:         master?.楽曲名_en,
+      楽曲名_ko:         master?.楽曲名_ko,
+      楽曲名_zh:         master?.楽曲名_zh,
+      歌唱順:            parseInt(row['歌唱順'] ?? '0', 10) || 0,
+      配信日:            normalizeDate(row['配信日'] ?? ''),
+      枠URL:             row['枠URL'] ?? '',
+      コラボ相手様:      row['コラボ相手様'] ?? 'なし',
+      原曲Artist:        master?.原曲アーティスト ?? row['原曲Artist'] ?? '',
+      原曲Artist_en:     master?.原曲アーティスト_en,
+      原曲Artist_ko:     master?.原曲アーティスト_ko,
+      原曲Artist_zh:     master?.原曲アーティスト_zh,
+      作詞:              master?.作詞 ?? row['作詞'] ?? '',
+      作曲:              master?.作曲 ?? row['作曲'] ?? '',
+      リリース日:        master?.リリース日 ?? row['リリース日'] ?? '',
     }
   })
 }
@@ -91,6 +101,9 @@ export function aggregateSongs(records: StreamingRecord[]): SongStat[] {
     if (existing) {
       existing.歌唱回数++
       if (!existing.原曲アーティスト && r.原曲Artist) existing.原曲アーティスト = r.原曲Artist
+      if (!existing.原曲アーティスト_en && r.原曲Artist_en) existing.原曲アーティスト_en = r.原曲Artist_en
+      if (!existing.原曲アーティスト_ko && r.原曲Artist_ko) existing.原曲アーティスト_ko = r.原曲Artist_ko
+      if (!existing.原曲アーティスト_zh && r.原曲Artist_zh) existing.原曲アーティスト_zh = r.原曲Artist_zh
       if (!existing.作詞 && r.作詞) existing.作詞 = r.作詞
       if (!existing.作曲 && r.作曲) existing.作曲 = r.作曲
       if (!existing.リリース日 && r.リリース日) {
@@ -99,13 +112,19 @@ export function aggregateSongs(records: StreamingRecord[]): SongStat[] {
       }
     } else {
       map.set(r.楽曲名, {
-        楽曲名:         r.楽曲名,
-        原曲アーティスト: r.原曲Artist,
-        作詞:           r.作詞,
-        作曲:           r.作曲,
-        リリース日:     r.リリース日,
-        リリース年:     toReleaseYear(r.リリース日),
-        歌唱回数:       1,
+        楽曲名:              r.楽曲名,
+        楽曲名_en:           r.楽曲名_en,
+        楽曲名_ko:           r.楽曲名_ko,
+        楽曲名_zh:           r.楽曲名_zh,
+        原曲アーティスト:    r.原曲Artist,
+        原曲アーティスト_en: r.原曲Artist_en,
+        原曲アーティスト_ko: r.原曲Artist_ko,
+        原曲アーティスト_zh: r.原曲Artist_zh,
+        作詞:                r.作詞,
+        作曲:                r.作曲,
+        リリース日:          r.リリース日,
+        リリース年:          toReleaseYear(r.リリース日),
+        歌唱回数:            1,
       })
     }
   }

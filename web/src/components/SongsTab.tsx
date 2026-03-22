@@ -1,9 +1,11 @@
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const MIKAGE_ICON = `${import.meta.env.BASE_URL}icon_mikage.png`
 import Plot from 'react-plotly.js'
 import { StreamingRecord, SongStat } from '../types'
 import { aggregateSongs } from '../utils/csv'
+import { localizeField } from '../utils/localize'
 
 interface Props {
   records: StreamingRecord[]
@@ -11,15 +13,6 @@ interface Props {
 
 type SortKey = keyof SongStat
 type SortDir = 'asc' | 'desc'
-
-const COLUMNS: { key: SortKey; label: string }[] = [
-  { key: '楽曲名', label: '楽曲名' },
-  { key: '原曲アーティスト', label: '原曲アーティスト' },
-  { key: '作詞', label: '作詞' },
-  { key: '作曲', label: '作曲' },
-  { key: 'リリース日', label: 'リリース日' },
-  { key: '歌唱回数', label: '歌唱回数' },
-]
 
 function sortSongs(songs: SongStat[], key: SortKey, dir: SortDir): SongStat[] {
   return [...songs].sort((a, b) => {
@@ -36,6 +29,8 @@ function sortSongs(songs: SongStat[], key: SortKey, dir: SortDir): SongStat[] {
 }
 
 export default function SongsTab({ records }: Props) {
+  const { t, i18n } = useTranslation()
+  const lang = i18n.language
   const songs: SongStat[] = useMemo(() => aggregateSongs(records), [records])
   const [sortKey, setSortKey] = useState<SortKey>('歌唱回数')
   const [sortDir, setSortDir] = useState<SortDir>('desc')
@@ -44,6 +39,15 @@ export default function SongsTab({ records }: Props) {
   const [barKey, setBarKey] = useState(0)
   const [treeKey, setTreeKey] = useState(0)
   const [treeKey2, setTreeKey2] = useState(0)
+
+  const COLUMNS: { key: SortKey; label: string }[] = [
+    { key: '楽曲名',         label: t('songs.colSong') },
+    { key: '原曲アーティスト', label: t('songs.colArtist') },
+    { key: '作詞',           label: t('songs.colLyrics') },
+    { key: '作曲',           label: t('songs.colCompose') },
+    { key: 'リリース日',     label: t('songs.colRelease') },
+    { key: '歌唱回数',       label: t('songs.colCount') },
+  ]
 
   const maxCount = top20[0]?.歌唱回数 ?? 1
   const barColors = top20.map((s) => `rgba(107,159,212,${0.2 + 0.7 * (s.歌唱回数 / maxCount)})`)
@@ -55,17 +59,24 @@ export default function SongsTab({ records }: Props) {
   }
   const years = Array.from(yearMap.entries()).sort((a, b) => a[0].localeCompare(b[0]))
 
-  const artistMap = new Map<string, number>()
+  // アーティスト集計（ローカライズ対応）
+  const artistMap = new Map<string, { count: number; displayName: string }>()
   for (const s of songs) {
-    const artist = s.原曲アーティスト?.trim()
-    if (!artist) continue
-    artistMap.set(artist, (artistMap.get(artist) ?? 0) + s.歌唱回数)
+    const jaArtist = s.原曲アーティスト?.trim()
+    if (!jaArtist) continue
+    const displayArtist = localizeField(s.原曲アーティスト, s.原曲アーティスト_en, s.原曲アーティスト_ko, s.原曲アーティスト_zh, lang)
+    const existing = artistMap.get(jaArtist)
+    if (existing) {
+      existing.count += s.歌唱回数
+    } else {
+      artistMap.set(jaArtist, { count: s.歌唱回数, displayName: displayArtist })
+    }
   }
-  const artists = Array.from(artistMap.entries()).sort((a, b) => b[1] - a[1])
-  const artistTotal = artists.reduce((sum, [, v]) => sum + v, 0)
+  const artists = Array.from(artistMap.values()).sort((a, b) => b.count - a.count)
+  const artistTotal = artists.reduce((sum, a) => sum + a.count, 0)
 
   if (records.length === 0) {
-    return <p style={{ color: '#888', padding: '1rem' }}>曲がまだ登録されていません。</p>
+    return <p style={{ color: '#888', padding: '1rem' }}>{t('songs.empty')}</p>
   }
 
   const handleHeaderClick = (key: SortKey) => {
@@ -109,8 +120,8 @@ export default function SongsTab({ records }: Props) {
           <tbody>
             {sortedSongs.map((s, i) => (
               <tr key={i}>
-                <td>{s.楽曲名}</td>
-                <td style={{ color: '#666' }}>{s.原曲アーティスト}</td>
+                <td>{localizeField(s.楽曲名, s.楽曲名_en, s.楽曲名_ko, s.楽曲名_zh, lang)}</td>
+                <td style={{ color: '#666' }}>{localizeField(s.原曲アーティスト, s.原曲アーティスト_en, s.原曲アーティスト_ko, s.原曲アーティスト_zh, lang)}</td>
                 <td style={{ color: '#666' }}>{s.作詞}</td>
                 <td style={{ color: '#666' }}>{s.作曲}</td>
                 <td style={{ color: '#666' }}>{s.リリース日}</td>
@@ -122,8 +133,8 @@ export default function SongsTab({ records }: Props) {
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-        <h3 style={{ color: '#555', margin: 0 }}>歌唱回数ランキング（上位20曲）</h3>
-        <button className="btn-secondary" onClick={() => setBarKey((k) => k + 1)}><img src={MIKAGE_ICON} alt="" style={{ height: 16, width: 16, objectFit: "contain", verticalAlign: "middle", marginRight: 5, filter: "invert(1) opacity(0.5)" }} />リセット</button>
+        <h3 style={{ color: '#555', margin: 0 }}>{t('songs.rankingTitle')}</h3>
+        <button className="btn-secondary" onClick={() => setBarKey((k) => k + 1)}><img src={MIKAGE_ICON} alt="" style={{ height: 16, width: 16, objectFit: "contain", verticalAlign: "middle", marginRight: 5, filter: "invert(1) opacity(0.5)" }} />{t('songs.reset')}</button>
       </div>
       <Plot
         key={barKey}
@@ -131,12 +142,12 @@ export default function SongsTab({ records }: Props) {
           type: 'bar',
           orientation: 'h',
           x: top20.map((s) => s.歌唱回数),
-          y: top20.map((s) => s.楽曲名),
+          y: top20.map((s) => localizeField(s.楽曲名, s.楽曲名_en, s.楽曲名_ko, s.楽曲名_zh, lang)),
           text: top20.map((s) => String(s.歌唱回数)),
           textposition: 'outside',
           marker: { color: barColors, line: { width: 0 } },
-          customdata: top20.map((s) => [s.原曲アーティスト]),
-          hovertemplate: '<b>%{y}</b><br>歌唱回数: %{x}<br>Artist: %{customdata[0]}<extra></extra>',
+          customdata: top20.map((s) => [localizeField(s.原曲アーティスト, s.原曲アーティスト_en, s.原曲アーティスト_ko, s.原曲アーティスト_zh, lang)]),
+          hovertemplate: '<b>%{y}</b><br>%{x}<br>Artist: %{customdata[0]}<extra></extra>',
         }]}
         layout={{
           paper_bgcolor: 'rgba(0,0,0,0)',
@@ -155,8 +166,8 @@ export default function SongsTab({ records }: Props) {
       {years.length > 0 && (
         <>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '24px 0 8px' }}>
-            <h3 style={{ color: '#555', margin: 0 }}>リリース年度分布</h3>
-            <button className="btn-secondary" onClick={() => setTreeKey((k) => k + 1)}><img src={MIKAGE_ICON} alt="" style={{ height: 16, width: 16, objectFit: "contain", verticalAlign: "middle", marginRight: 5, filter: "invert(1) opacity(0.5)" }} />リセット</button>
+            <h3 style={{ color: '#555', margin: 0 }}>{t('songs.yearTitle')}</h3>
+            <button className="btn-secondary" onClick={() => setTreeKey((k) => k + 1)}><img src={MIKAGE_ICON} alt="" style={{ height: 16, width: 16, objectFit: "contain", verticalAlign: "middle", marginRight: 5, filter: "invert(1) opacity(0.5)" }} />{t('songs.reset')}</button>
           </div>
           <Plot
             key={treeKey}
@@ -173,7 +184,7 @@ export default function SongsTab({ records }: Props) {
                 ],
                 line: { width: 0 },
               },
-              hovertemplate: '<b>%{x}</b><br>%{y}曲<extra></extra>',
+              hovertemplate: '<b>%{x}</b><br>%{y}<extra></extra>',
             }]}
             layout={{
               paper_bgcolor: 'rgba(0,0,0,0)',
@@ -194,20 +205,20 @@ export default function SongsTab({ records }: Props) {
       {artists.length > 0 && (
         <>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '24px 0 8px' }}>
-            <h3 style={{ color: '#555', margin: 0 }}>原曲アーティスト分布</h3>
-            <button className="btn-secondary" onClick={() => setTreeKey2((k) => k + 1)}><img src={MIKAGE_ICON} alt="" style={{ height: 16, width: 16, objectFit: "contain", verticalAlign: "middle", marginRight: 5, filter: "invert(1) opacity(0.5)" }} />リセット</button>
+            <h3 style={{ color: '#555', margin: 0 }}>{t('songs.artistTitle')}</h3>
+            <button className="btn-secondary" onClick={() => setTreeKey2((k) => k + 1)}><img src={MIKAGE_ICON} alt="" style={{ height: 16, width: 16, objectFit: "contain", verticalAlign: "middle", marginRight: 5, filter: "invert(1) opacity(0.5)" }} />{t('songs.reset')}</button>
           </div>
           <Plot
             key={treeKey2}
             data={[{
               type: 'treemap',
-              labels: artists.map(([a]) => a),
+              labels: artists.map((a) => a.displayName),
               parents: artists.map(() => ''),
-              values: artists.map(([, v]) => v),
-              text: artists.map(([, v]) => `${(v / artistTotal * 100).toFixed(1)}%`),
-              texttemplate: '<b>%{label}</b><br>%{value}回<br>%{text}',
-              hovertemplate: '<b>%{label}</b><br>%{value}回 (%{text})<extra></extra>',
-              marker: { colors: artists.map(([, v]) => v), colorscale: treeColorscale, line: { width: 2, color: '#ffffff' }, pad: { t: 22, l: 4, r: 4, b: 4 } },
+              values: artists.map((a) => a.count),
+              text: artists.map((a) => `${(a.count / artistTotal * 100).toFixed(1)}%`),
+              texttemplate: '<b>%{label}</b><br>%{value}<br>%{text}',
+              hovertemplate: '<b>%{label}</b><br>%{value} (%{text})<extra></extra>',
+              marker: { colors: artists.map((a) => a.count), colorscale: treeColorscale, line: { width: 2, color: '#ffffff' }, pad: { t: 22, l: 4, r: 4, b: 4 } },
             }]}
             layout={{ paper_bgcolor: 'rgba(0,0,0,0)', font: { family: 'Noto Sans JP', color: '#c0c0c0' }, margin: { t: 4, l: 0, r: 0, b: 0 }, height: 420 }}
             config={{ displayModeBar: false, responsive: true, scrollZoom: false }}
