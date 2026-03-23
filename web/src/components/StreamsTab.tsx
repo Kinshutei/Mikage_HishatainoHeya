@@ -66,15 +66,15 @@ export default function StreamsTab({ records }: Props) {
             style={{
               width: '100%',
               padding: '7px 36px 7px 32px',
-              border: '1px solid #2e2e2e',
+              border: '1px solid #d8cfc4',
               borderRadius: '20px',
               fontFamily: 'inherit',
               fontSize: '15px',
               outline: 'none',
-              background: '#1c1c1c',
-              color: '#e8e8e8',
-              boxShadow: isSearching ? '0 0 0 2px rgba(107,159,212,0.25)' : undefined,
-              borderColor: isSearching ? '#6b9fd4' : '#2e2e2e',
+              background: '#f5f0e8',
+              color: '#2a2a2a',
+              boxShadow: isSearching ? '0 0 0 2px rgba(138,184,185,0.35)' : undefined,
+              borderColor: isSearching ? '#8ab8b9' : '#d8cfc4',
               transition: 'border-color 0.15s, box-shadow 0.15s',
             }}
           />

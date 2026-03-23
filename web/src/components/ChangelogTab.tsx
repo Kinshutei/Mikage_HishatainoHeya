@@ -10,9 +10,9 @@ export default function ChangelogTab() {
   const entries = t('changelog.entries', { returnObjects: true }) as ChangelogEntry[]
 
   return (
-    <div style={{ maxWidth: 760, margin: '0 auto', lineHeight: 1.85, color: '#c0c0c0' }}>
+    <div style={{ maxWidth: 760, margin: '0 auto', lineHeight: 1.85, color: '#2a2a2a' }}>
       <section>
-        <h3 style={{ color: '#6b9fd4', fontSize: '1.1rem' }}>{t('changelog.title')}</h3>
+        <h3 style={{ color: '#3a6a6b', fontSize: '1.1rem' }}>{t('changelog.title')}</h3>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
           <tbody>
             {entries.map((entry) =>
@@ -20,8 +20,8 @@ export default function ChangelogTab() {
                 <tr key={`${entry.date}-${i}`}>
                   <td style={{
                     padding: '8px 16px 8px 0',
-                    borderBottom: '1px solid #1e1e1e',
-                    color: '#606060',
+                    borderBottom: '1px solid #cce0e0',
+                    color: '#5a8a8b',
                     whiteSpace: 'nowrap',
                     verticalAlign: 'top',
                     width: 120,
@@ -30,8 +30,8 @@ export default function ChangelogTab() {
                   </td>
                   <td style={{
                     padding: '8px 0',
-                    borderBottom: '1px solid #1e1e1e',
-                    color: '#c0c0c0',
+                    borderBottom: '1px solid #cce0e0',
+                    color: '#2a2a2a',
                   }}>
                     {item}
                   </td>

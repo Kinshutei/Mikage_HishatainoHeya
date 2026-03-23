@@ -9,10 +9,10 @@ export default function Footer() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'rgb(22, 22, 22)',
-      borderTop: '1px solid rgb(34, 34, 34)',
+      background: '#acd0d1',
+      borderTop: '1px solid #8ab8b9',
       fontSize: 13,
-      color: 'rgb(112, 112, 112)',
+      color: 'rgb(40, 40, 40)',
       letterSpacing: '0.06em',
       fontFamily: '"Noto Sans JP", sans-serif',
       zIndex: 200,
@@ -21,12 +21,12 @@ export default function Footer() {
       <span className="footer-full">
         © 2026{' '}
         <a href="https://x.com/WL_GE_inn" target="_blank" rel="noopener noreferrer"
-          style={{ color: 'rgb(136, 136, 136)', textDecoration: 'none' }}>
+          style={{ color: 'rgb(40, 40, 40)', textDecoration: 'none' }}>
           金鷲亭
         </a>
         　|　非公式ファンサイト — 深影（Mikage / RK Music）　|　掲載情報の誤りは{' '}
         <a href="https://x.com/WL_GE_inn" target="_blank" rel="noopener noreferrer"
-          style={{ color: 'rgb(136, 136, 136)', textDecoration: 'none' }}>
+          style={{ color: 'rgb(40, 40, 40)', textDecoration: 'none' }}>
           @WL_GE_inn
         </a>{' '}
         までお気軽にどうぞ
@@ -34,6 +34,32 @@ export default function Footer() {
       <span className="footer-short">
         © 2026 金鷲亭　|　深影（Mikage / RK Music）非公式ファンサイト
       </span>
+
+      {/* SNSアイコン：右端 */}
+      <div className="footer-icons">
+        <a
+          href="https://www.youtube.com/@Mikage_RKMusic"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="footer-icon-link"
+          aria-label="YouTube"
+        >
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.55 3.5 12 3.5 12 3.5s-7.55 0-9.38.55A3.02 3.02 0 0 0 .5 6.19C0 8.03 0 12 0 12s0 3.97.5 5.81a3.02 3.02 0 0 0 2.12 2.14C4.45 20.5 12 20.5 12 20.5s7.55 0 9.38-.55a3.02 3.02 0 0 0 2.12-2.14C24 15.97 24 12 24 12s0-3.97-.5-5.81zM9.75 15.52V8.48L15.5 12l-5.75 3.52z"/>
+          </svg>
+        </a>
+        <a
+          href="https://x.com/Mikage_0916"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="footer-icon-link"
+          aria-label="X (Twitter)"
+        >
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/>
+          </svg>
+        </a>
+      </div>
     </footer>
   )
 }

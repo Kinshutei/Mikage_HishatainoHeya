@@ -110,7 +110,7 @@ export default function SongsTab({ records }: Props) {
                 <th
                   key={key}
                   onClick={() => handleHeaderClick(key)}
-                  style={{ cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap', background: sortKey === key ? '#1a1e2a' : undefined }}
+                  style={{ cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap', background: sortKey === key ? 'rgba(172, 208, 209, 0.55)' : undefined }}
                 >
                   {label}{sortIndicator(key)}
                 </th>

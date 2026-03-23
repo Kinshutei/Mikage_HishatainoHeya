@@ -15,7 +15,7 @@
   },
   "streams": {
     "empty": "配信枠がまだ登録されていません。",
-    "searchPlaceholder": "曲名で検索...",
+    "searchPlaceholder": "曲名または原曲アーティストで検索...",
     "searchHits": "{{count}} 件の枠がヒット",
     "searchNoResults": "「{{query}}」を含む枠が見つかりませんでした。",
     "expandAll": "▼ 全て開く",

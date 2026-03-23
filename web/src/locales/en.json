@@ -15,7 +15,7 @@
   },
   "streams": {
     "empty": "No streams registered yet.",
-    "searchPlaceholder": "Search by song title...",
+    "searchPlaceholder": "Search by song title or original artist...",
     "searchHits": "{{count}} stream(s) found",
     "searchNoResults": "No streams found containing \"{{query}}\".",
     "expandAll": "▼ Expand All",
