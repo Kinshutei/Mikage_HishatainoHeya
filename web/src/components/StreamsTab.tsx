@@ -182,7 +182,14 @@ function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, set
             <div>
               {thumbUrl ? (
                 <>
-                  <img src={thumbUrl} alt="サムネイル" style={{ width: '100%', borderRadius: '6px' }} />
+                  <div style={{
+                    width: '100%',
+                    paddingTop: '56.25%',
+                    borderRadius: '6px',
+                    backgroundImage: `url(${thumbUrl})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                  }} />
                   <a href={cleanUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', color: '#6b9fd4', display: 'block', marginTop: '4px' }}>
                     {t('streams.openYouTube')}
                   </a>
