@@ -25,8 +25,10 @@ body {
 /* バナー：下・左右フェード */
 .banner {
   width: 100%;
-  line-height: 0;
+  height: 240px;
   position: relative;
+  background-size: cover;
+  background-position: center;
 }
 .banner::before {
   content: '';
@@ -37,12 +39,6 @@ body {
     linear-gradient(to bottom, transparent 60%, #0e0e0e 100%);
   pointer-events: none;
   z-index: 1;
-}
-.banner img {
-  width: 100%;
-  max-height: 240px;
-  object-fit: cover;
-  display: block;
 }
 
 .tabs {

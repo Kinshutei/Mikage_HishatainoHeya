@@ -106,9 +106,7 @@ export default function App() {
       </div>
 
       {/* バナー */}
-      <div className="banner">
-        <img src={BANNER_URL} alt="深影 バナー" />
-      </div>
+      <div className="banner" style={{ backgroundImage: `url(${BANNER_URL})` }} />
 
       {/* タブ（デスクトップ） */}
       <div className="tabs tabs-desktop">
