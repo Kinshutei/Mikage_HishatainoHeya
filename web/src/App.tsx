@@ -34,7 +34,7 @@ const LANGS = [
 ]
 
 export default function App() {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const [records, setRecords] = useState<StreamingRecord[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -73,15 +73,24 @@ export default function App() {
     setLanguage(lang)
   }
 
-  const currentLang = LANGS.find(l => l.value === i18n.language)?.value ?? 'ja'
+  const [selectedLang, setSelectedLang] = useState<string>(
+    () => {
+      const stored = localStorage.getItem('lang') ?? ''
+      return LANGS.some(l => l.value === stored) ? stored : ''
+    }
+  )
 
   const langSelector = (
     <div className="lang-selector">
       <select
-        value={currentLang}
-        onChange={e => handleLangChange(e.target.value)}
+        value={selectedLang}
+        onChange={e => {
+          setSelectedLang(e.target.value)
+          handleLangChange(e.target.value)
+        }}
         aria-label="Language"
       >
+        <option value="" disabled>Language</option>
         {LANGS.map(l => (
           <option key={l.value} value={l.value}>{l.label}</option>
         ))}
