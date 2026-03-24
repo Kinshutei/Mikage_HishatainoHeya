@@ -50,7 +50,7 @@ export default function SongsTab({ records }: Props) {
   ]
 
   const maxCount = top20[0]?.歌唱回数 ?? 1
-  const barColors = top20.map((s) => `rgba(107,159,212,${0.2 + 0.7 * (s.歌唱回数 / maxCount)})`)
+  const barColors = top20.map((s) => `rgba(172,208,209,${0.25 + 0.75 * (s.歌唱回数 / maxCount)})`)
 
   const yearMap = new Map<string, number>()
   for (const s of songs) {
@@ -89,15 +89,15 @@ export default function SongsTab({ records }: Props) {
   }
 
   const sortIndicator = (key: SortKey) => {
-    if (sortKey !== key) return <span style={{ color: '#ccc', marginLeft: 4 }}>⇅</span>
-    return <span style={{ color: '#5a7fa8', marginLeft: 4 }}>{sortDir === 'asc' ? '▲' : '▼'}</span>
+    if (sortKey !== key) return <span style={{ color: '#acd0d1', marginLeft: 4 }}>⇅</span>
+    return <span style={{ color: '#3a7a7b', marginLeft: 4 }}>{sortDir === 'asc' ? '▲' : '▼'}</span>
   }
 
   const treeColorscale: [number, string][] = [
-    [0.0, '#111a2e'],
-    [0.4, '#1e3050'],
-    [0.7, '#2e5a8a'],
-    [1.0, '#6b9fd4'],
+    [0.0, '#0e2525'],
+    [0.4, '#1a4a4b'],
+    [0.7, '#3a7a7b'],
+    [1.0, '#acd0d1'],
   ]
 
   return (
@@ -125,7 +125,7 @@ export default function SongsTab({ records }: Props) {
                 <td style={{ color: '#666' }}>{s.作詞}</td>
                 <td style={{ color: '#666' }}>{s.作曲}</td>
                 <td style={{ color: '#666' }}>{s.リリース日}</td>
-                <td style={{ textAlign: 'center', fontWeight: 600, color: '#6b9fd4' }}>{s.歌唱回数}</td>
+                <td style={{ textAlign: 'center', fontWeight: 600, color: '#3a7a7b' }}>{s.歌唱回数}</td>
               </tr>
             ))}
           </tbody>
@@ -152,9 +152,9 @@ export default function SongsTab({ records }: Props) {
         layout={{
           paper_bgcolor: 'rgba(0,0,0,0)',
           plot_bgcolor: 'rgba(0,0,0,0)',
-          font: { family: 'Noto Sans JP', color: '#a0a0a0', size: 12 },
-          yaxis: { autorange: 'reversed', showgrid: false, tickfont: { size: 11 }, color: '#a0a0a0' },
-          xaxis: { showgrid: true, gridcolor: 'rgba(255,255,255,0.05)', zeroline: false, color: '#606060' },
+          font: { family: 'Noto Sans JP', color: '#3a6a6b', size: 12 },
+          yaxis: { autorange: 'reversed', showgrid: false, tickfont: { size: 11 }, color: '#3a6a6b' },
+          xaxis: { showgrid: true, gridcolor: 'rgba(172,208,209,0.35)', zeroline: false, color: '#5a8a8b' },
           margin: { l: 160, r: 55, t: 16, b: 10 },
           height: Math.max(380, top20.length * 26),
         }}
@@ -180,7 +180,7 @@ export default function SongsTab({ records }: Props) {
               marker: {
                 color: years.map(([, v]) => v),
                 colorscale: [
-                  [0.0, '#111a2e'], [0.4, '#1e3050'], [0.7, '#2e5a8a'], [1.0, '#6b9fd4'],
+                  [0.0, '#0e2525'], [0.4, '#1a4a4b'], [0.7, '#3a7a7b'], [1.0, '#acd0d1'],
                 ],
                 line: { width: 0 },
               },
@@ -189,9 +189,9 @@ export default function SongsTab({ records }: Props) {
             layout={{
               paper_bgcolor: 'rgba(0,0,0,0)',
               plot_bgcolor: 'rgba(0,0,0,0)',
-              font: { family: 'Noto Sans JP', color: '#a0a0a0', size: 12 },
-              xaxis: { showgrid: false, color: '#606060', tickangle: -45, tickfont: { size: 11 } },
-              yaxis: { showgrid: true, gridcolor: 'rgba(255,255,255,0.05)', zeroline: false, color: '#606060' },
+              font: { family: 'Noto Sans JP', color: '#3a6a6b', size: 12 },
+              xaxis: { showgrid: false, color: '#5a8a8b', tickangle: -45, tickfont: { size: 11 } },
+              yaxis: { showgrid: true, gridcolor: 'rgba(172,208,209,0.35)', zeroline: false, color: '#5a8a8b' },
               margin: { l: 40, r: 20, t: 24, b: 60 },
               height: 320,
             }}
@@ -220,7 +220,7 @@ export default function SongsTab({ records }: Props) {
               hovertemplate: '<b>%{label}</b><br>%{value} (%{text})<extra></extra>',
               marker: { colors: artists.map((a) => a.count), colorscale: treeColorscale, line: { width: 2, color: '#ffffff' }, pad: { t: 22, l: 4, r: 4, b: 4 } },
             }]}
-            layout={{ paper_bgcolor: 'rgba(0,0,0,0)', font: { family: 'Noto Sans JP', color: '#c0c0c0' }, margin: { t: 4, l: 0, r: 0, b: 0 }, height: 420 }}
+            layout={{ paper_bgcolor: 'rgba(0,0,0,0)', font: { family: 'Noto Sans JP', color: '#1a1a1a' }, margin: { t: 4, l: 0, r: 0, b: 0 }, height: 420 }}
             config={{ displayModeBar: false, responsive: true, scrollZoom: false }}
             style={{ width: '100%' }}
             useResizeHandler
