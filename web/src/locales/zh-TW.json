@@ -21,6 +21,8 @@
     "expandAll": "▼ 全部展開",
     "collapseAll": "▲ 全部收起",
     "colSong": "曲名",
+    "colKey": "移調",
+    "colNote": "備註",
     "colArtist": "原曲藝術家",
     "colUrl": "URL",
     "colCollab": "合唱嘉賓",

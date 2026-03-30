@@ -21,6 +21,8 @@
     "expandAll": "▼ Expand All",
     "collapseAll": "▲ Collapse All",
     "colSong": "Song Title",
+    "colKey": "Key",
+    "colNote": "Note",
     "colArtist": "Original Artist",
     "colUrl": "URL",
     "colCollab": "Collaborator",

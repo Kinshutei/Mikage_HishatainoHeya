@@ -21,6 +21,8 @@
     "expandAll": "▼ 全て開く",
     "collapseAll": "▲ 全て閉じる",
     "colSong": "楽曲名",
+    "colKey": "キー",
+    "colNote": "補足",
     "colArtist": "原曲アーティスト",
     "colUrl": "URL",
     "colCollab": "コラボ相手様",

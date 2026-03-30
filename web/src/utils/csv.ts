@@ -51,6 +51,7 @@ export function parseCSV(
     return {
       枠名:              row['枠名'] ?? '',
       song_id:           songId,
+      補足情報:          row['補足情報']?.trim() ?? '',
       楽曲名:            master?.楽曲名 ?? row['楽曲名'] ?? '',
       楽曲名_en:         master?.楽曲名_en,
       楽曲名_ko:         master?.楽曲名_ko,
@@ -59,6 +60,7 @@ export function parseCSV(
       配信日:            normalizeDate(row['配信日'] ?? ''),
       枠URL:             row['枠URL'] ?? '',
       コラボ相手様:      row['コラボ相手様'] ?? 'なし',
+      キー:              row['キー']?.trim() ?? '',
       原曲Artist:        master?.原曲アーティスト ?? row['原曲Artist'] ?? '',
       原曲Artist_en:     master?.原曲アーティスト_en,
       原曲Artist_ko:     master?.原曲アーティスト_ko,

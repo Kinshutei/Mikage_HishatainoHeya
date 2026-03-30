@@ -16,6 +16,7 @@ export interface SongMaster {
 export interface StreamingRecord {
   枠名: string
   song_id: string
+  補足情報: string
   楽曲名: string
   楽曲名_en?: string
   楽曲名_ko?: string
@@ -24,6 +25,7 @@ export interface StreamingRecord {
   配信日: string
   枠URL: string
   コラボ相手様: string
+  キー: string
   // マスターから JOIN されるフィールド
   原曲Artist: string
   原曲Artist_en?: string
