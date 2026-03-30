@@ -17,13 +17,7 @@ export function parseSongMaster(text: string): Map<string, SongMaster> {
     map.set(id, {
       song_id: id,
       楽曲名:             row['楽曲名'] ?? '',
-      楽曲名_en:          row['楽曲名_en'] || undefined,
-      楽曲名_ko:          row['楽曲名_ko'] || undefined,
-      楽曲名_zh:          row['楽曲名_zh'] || undefined,
       原曲アーティスト:   row['原曲アーティスト'] ?? '',
-      原曲アーティスト_en: row['原曲アーティスト_en'] || undefined,
-      原曲アーティスト_ko: row['原曲アーティスト_ko'] || undefined,
-      原曲アーティスト_zh: row['原曲アーティスト_zh'] || undefined,
       作詞1:              row['作詞1'] ?? row['作詞'] ?? '',
       作詞2:              row['作詞2'] ?? '',
       作曲1:              row['作曲1'] ?? row['作曲'] ?? '',
@@ -57,18 +51,12 @@ export function parseCSV(
       song_id:           songId,
       補足情報:          row['補足情報']?.trim() ?? '',
       楽曲名:            master?.楽曲名 ?? row['楽曲名'] ?? '',
-      楽曲名_en:         master?.楽曲名_en,
-      楽曲名_ko:         master?.楽曲名_ko,
-      楽曲名_zh:         master?.楽曲名_zh,
       歌唱順:            parseInt(row['歌唱順'] ?? '0', 10) || 0,
       配信日:            normalizeDate(row['配信日'] ?? ''),
       枠URL:             row['枠URL'] ?? '',
       コラボ相手様:      row['コラボ相手様'] ?? 'なし',
       キー:              row['キー']?.trim() ?? '',
       原曲Artist:        master?.原曲アーティスト ?? row['原曲Artist'] ?? '',
-      原曲Artist_en:     master?.原曲アーティスト_en,
-      原曲Artist_ko:     master?.原曲アーティスト_ko,
-      原曲Artist_zh:     master?.原曲アーティスト_zh,
       作詞1:             master?.作詞1 ?? row['作詞1'] ?? row['作詞'] ?? '',
       作詞2:             master?.作詞2 ?? row['作詞2'] ?? '',
       作曲1:             master?.作曲1 ?? row['作曲1'] ?? row['作曲'] ?? '',
@@ -111,9 +99,6 @@ export function aggregateSongs(records: StreamingRecord[]): SongStat[] {
     if (existing) {
       existing.歌唱回数++
       if (!existing.原曲アーティスト && r.原曲Artist) existing.原曲アーティスト = r.原曲Artist
-      if (!existing.原曲アーティスト_en && r.原曲Artist_en) existing.原曲アーティスト_en = r.原曲Artist_en
-      if (!existing.原曲アーティスト_ko && r.原曲Artist_ko) existing.原曲アーティスト_ko = r.原曲Artist_ko
-      if (!existing.原曲アーティスト_zh && r.原曲Artist_zh) existing.原曲アーティスト_zh = r.原曲Artist_zh
       if (!existing.作詞1 && r.作詞1) existing.作詞1 = r.作詞1
       if (!existing.作詞2 && r.作詞2) existing.作詞2 = r.作詞2
       if (!existing.作曲1 && r.作曲1) existing.作曲1 = r.作曲1
@@ -127,13 +112,7 @@ export function aggregateSongs(records: StreamingRecord[]): SongStat[] {
     } else {
       map.set(r.楽曲名, {
         楽曲名:              r.楽曲名,
-        楽曲名_en:           r.楽曲名_en,
-        楽曲名_ko:           r.楽曲名_ko,
-        楽曲名_zh:           r.楽曲名_zh,
         原曲アーティスト:    r.原曲Artist,
-        原曲アーティスト_en: r.原曲Artist_en,
-        原曲アーティスト_ko: r.原曲Artist_ko,
-        原曲アーティスト_zh: r.原曲Artist_zh,
         作詞1:               r.作詞1,
         作詞2:               r.作詞2,
         作曲1:               r.作曲1,

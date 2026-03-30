@@ -2,15 +2,13 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StreamingRecord } from '../types'
 import { extractYtVideoId } from '../utils/csv'
-import { localizeField } from '../utils/localize'
 
 interface Props {
   records: StreamingRecord[]
 }
 
 export default function StreamsTab({ records }: Props) {
-  const { t, i18n } = useTranslation()
-  const lang = i18n.language
+  const { t } = useTranslation()
   const [defaultOpen, setDefaultOpen] = useState(false)
   const [mountKey, setMountKey] = useState(0)
   const [query, setQuery] = useState('')
@@ -36,8 +34,8 @@ export default function StreamsTab({ records }: Props) {
         records
           .filter((r) => r.枠名 === stream.枠名)
           .some((r) => {
-            const title  = localizeField(r.楽曲名, r.楽曲名_en, r.楽曲名_ko, r.楽曲名_zh, lang).toLowerCase()
-            const artist = localizeField(r.原曲Artist, r.原曲Artist_en, r.原曲Artist_ko, r.原曲Artist_zh, lang).toLowerCase()
+            const title  = r.楽曲名.toLowerCase()
+            const artist = r.原曲Artist.toLowerCase()
             return title.includes(q) || artist.includes(q)
           })
       )
@@ -112,8 +110,8 @@ export default function StreamsTab({ records }: Props) {
             .filter((r) => r.枠名 === stream.枠名)
             .filter((r) => {
               if (!isSearching) return true
-              const title  = localizeField(r.楽曲名, r.楽曲名_en, r.楽曲名_ko, r.楽曲名_zh, lang).toLowerCase()
-              const artist = localizeField(r.原曲Artist, r.原曲Artist_en, r.原曲Artist_ko, r.原曲Artist_zh, lang).toLowerCase()
+              const title  = r.楽曲名.toLowerCase()
+              const artist = r.原曲Artist.toLowerCase()
               return title.includes(q) || artist.includes(q)
             })
             .sort((a, b) => a.歌唱順 - b.歌唱順)
@@ -137,7 +135,6 @@ export default function StreamsTab({ records }: Props) {
               query={trimmedQuery}
               showCollab={frameHasCollab}
               firstAppearance={firstAppearance}
-              lang={lang}
             />
           )
         })}
@@ -156,10 +153,9 @@ interface ExpanderProps {
   query: string
   showCollab: boolean
   firstAppearance: Map<string, { 枠名: string; 歌唱順: number }>
-  lang: string
 }
 
-function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, setlist, query, showCollab, firstAppearance, lang }: ExpanderProps) {
+function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, setlist, query, showCollab, firstAppearance }: ExpanderProps) {
   const { t } = useTranslation()
   const [localOpen, setLocalOpen] = useState(defaultOpen)
   const isOpen = forceOpen || localOpen
@@ -214,8 +210,8 @@ function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, set
                 </thead>
                 <tbody>
                   {setlist.map((r, i) => {
-                    const displayTitle  = localizeField(r.楽曲名, r.楽曲名_en, r.楽曲名_ko, r.楽曲名_zh, lang)
-                    const displayArtist = localizeField(r.原曲Artist, r.原曲Artist_en, r.原曲Artist_ko, r.原曲Artist_zh, lang)
+                    const displayTitle  = r.楽曲名
+                    const displayArtist = r.原曲Artist
                     const hitTitle  = query.length > 0 && displayTitle.toLowerCase().includes(q)
                     const hitArtist = query.length > 0 && displayArtist.toLowerCase().includes(q)
                     const isHit = hitTitle || hitArtist

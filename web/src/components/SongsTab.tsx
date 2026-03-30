@@ -5,7 +5,6 @@ const MIKAGE_ICON = `${import.meta.env.BASE_URL}icon_mikage.png`
 import Plot from 'react-plotly.js'
 import { StreamingRecord, SongStat } from '../types'
 import { aggregateSongs } from '../utils/csv'
-import { localizeField } from '../utils/localize'
 
 interface Props {
   records: StreamingRecord[]
@@ -29,8 +28,7 @@ function sortSongs(songs: SongStat[], key: SortKey, dir: SortDir): SongStat[] {
 }
 
 export default function SongsTab({ records }: Props) {
-  const { t, i18n } = useTranslation()
-  const lang = i18n.language
+  const { t } = useTranslation()
   const songs: SongStat[] = useMemo(() => aggregateSongs(records), [records])
   const [sortKey, setSortKey] = useState<SortKey>('歌唱回数')
   const [sortDir, setSortDir] = useState<SortDir>('desc')
@@ -60,17 +58,16 @@ export default function SongsTab({ records }: Props) {
   }
   const years = Array.from(yearMap.entries()).sort((a, b) => a[0].localeCompare(b[0]))
 
-  // アーティスト集計（ローカライズ対応）
+  // アーティスト集計
   const artistMap = new Map<string, { count: number; displayName: string }>()
   for (const s of songs) {
-    const jaArtist = s.原曲アーティスト?.trim()
-    if (!jaArtist) continue
-    const displayArtist = localizeField(s.原曲アーティスト, s.原曲アーティスト_en, s.原曲アーティスト_ko, s.原曲アーティスト_zh, lang)
-    const existing = artistMap.get(jaArtist)
+    const artist = s.原曲アーティスト?.trim()
+    if (!artist) continue
+    const existing = artistMap.get(artist)
     if (existing) {
       existing.count += s.歌唱回数
     } else {
-      artistMap.set(jaArtist, { count: s.歌唱回数, displayName: displayArtist })
+      artistMap.set(artist, { count: s.歌唱回数, displayName: artist })
     }
   }
   const artists = Array.from(artistMap.values()).sort((a, b) => b.count - a.count)
@@ -121,8 +118,8 @@ export default function SongsTab({ records }: Props) {
           <tbody>
             {sortedSongs.map((s, i) => (
               <tr key={i}>
-                <td>{localizeField(s.楽曲名, s.楽曲名_en, s.楽曲名_ko, s.楽曲名_zh, lang)}</td>
-                <td style={{ color: '#666' }}>{localizeField(s.原曲アーティスト, s.原曲アーティスト_en, s.原曲アーティスト_ko, s.原曲アーティスト_zh, lang)}</td>
+                <td>{s.楽曲名}</td>
+                <td style={{ color: '#666' }}>{s.原曲アーティスト}</td>
                 <td style={{ color: '#666' }}>{s.作詞1}{s.作詞2 && <><br /><span style={{ color: '#888' }}>{s.作詞2}</span></>}</td>
                 <td style={{ color: '#666' }}>{s.作曲1}{s.作曲2 && <><br /><span style={{ color: '#888' }}>{s.作曲2}</span></>}</td>
                 <td style={{ color: '#666' }}>{s.編曲1}{s.編曲2 && <><br /><span style={{ color: '#888' }}>{s.編曲2}</span></>}</td>
@@ -144,11 +141,11 @@ export default function SongsTab({ records }: Props) {
           type: 'bar',
           orientation: 'h',
           x: top20.map((s) => s.歌唱回数),
-          y: top20.map((s) => localizeField(s.楽曲名, s.楽曲名_en, s.楽曲名_ko, s.楽曲名_zh, lang)),
+          y: top20.map((s) => s.楽曲名),
           text: top20.map((s) => String(s.歌唱回数)),
           textposition: 'outside',
           marker: { color: barColors, line: { width: 0 } },
-          customdata: top20.map((s) => [localizeField(s.原曲アーティスト, s.原曲アーティスト_en, s.原曲アーティスト_ko, s.原曲アーティスト_zh, lang)]),
+          customdata: top20.map((s) => [s.原曲アーティスト]),
           hovertemplate: '<b>%{y}</b><br>%{x}<br>Artist: %{customdata[0]}<extra></extra>',
         }]}
         layout={{
