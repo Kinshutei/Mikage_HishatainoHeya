@@ -9,13 +9,13 @@ import re
 # ─────────────────────────────────────────
 # 定数
 # ─────────────────────────────────────────
-STREAMING_COLUMNS = ["枠名", "song_id", "歌唱順", "配信日", "枠URL", "コラボ相手様"]
+STREAMING_COLUMNS = ["枠名", "song_id", "補足情報", "歌唱順", "配信日", "枠URL", "コラボ相手様", "キー"]
 MASTER_COLUMNS    = ["song_id", "楽曲名", "原曲アーティスト", "作詞", "作曲", "リリース日"]
 
 # JOIN後の統合カラム（表示用）
 JOINED_COLUMNS = [
-    "枠名", "song_id", "楽曲名", "歌唱順", "配信日",
-    "枠URL", "コラボ相手様", "原曲アーティスト", "作詞", "作曲", "リリース日",
+    "枠名", "song_id", "補足情報", "楽曲名", "歌唱順", "配信日",
+    "枠URL", "コラボ相手様", "キー", "原曲アーティスト", "作詞", "作曲", "リリース日",
 ]
 
 BANNER_URL = (
@@ -141,6 +141,8 @@ def _normalize_streaming(df: pd.DataFrame) -> pd.DataFrame:
     df["コラボ相手様"] = df["コラボ相手様"].fillna("なし").astype(str)
     df["枠URL"]    = df["枠URL"].fillna("").astype(str)
     df["song_id"]  = df["song_id"].fillna("").astype(str).str.strip()
+    df["補足情報"] = df["補足情報"].fillna("").astype(str)
+    df["キー"]     = df["キー"].fillna("").astype(str)
     return df
 
 def _parse_date(val) -> str:
