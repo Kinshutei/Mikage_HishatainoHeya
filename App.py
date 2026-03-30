@@ -10,12 +10,12 @@ import re
 # 定数
 # ─────────────────────────────────────────
 STREAMING_COLUMNS = ["枠名", "song_id", "補足情報", "歌唱順", "配信日", "枠URL", "コラボ相手様", "キー"]
-MASTER_COLUMNS    = ["song_id", "楽曲名", "原曲アーティスト", "作詞", "作曲", "リリース日"]
+MASTER_COLUMNS    = ["song_id", "楽曲名", "楽曲名_en", "楽曲名_ko", "楽曲名_zh", "原曲アーティスト", "原曲アーティスト_en", "原曲アーティスト_ko", "原曲アーティスト_zh", "作詞1", "作詞2", "作曲1", "作曲2", "編曲1", "編曲2", "リリース日"]
 
 # JOIN後の統合カラム（表示用）
 JOINED_COLUMNS = [
     "枠名", "song_id", "補足情報", "楽曲名", "歌唱順", "配信日",
-    "枠URL", "コラボ相手様", "キー", "原曲アーティスト", "作詞", "作曲", "リリース日",
+    "枠URL", "コラボ相手様", "キー", "原曲アーティスト", "作詞1", "作詞2", "作曲1", "作曲2", "編曲1", "編曲2", "リリース日",
 ]
 
 BANNER_URL = (
@@ -106,7 +106,7 @@ def _normalize_master(df: pd.DataFrame) -> pd.DataFrame:
         if col not in df.columns:
             df[col] = ""
     df = df[MASTER_COLUMNS].copy()
-    for col in ["楽曲名", "原曲アーティスト", "作詞", "作曲", "リリース日"]:
+    for col in ["楽曲名", "原曲アーティスト", "作詞1", "作詞2", "作曲1", "作曲2", "編曲1", "編曲2", "リリース日"]:
         df[col] = df[col].fillna("").astype(str).str.strip()
     df["song_id"] = df["song_id"].fillna("").astype(str).str.strip()
     return df
@@ -162,11 +162,11 @@ def join_df(streaming: pd.DataFrame, master: pd.DataFrame) -> pd.DataFrame:
     """streaming_info に song_master を song_id でJOINして統合DataFrameを返す。"""
     if master.empty:
         # マスターがない場合はフォールバック（楽曲名なしで表示）
-        for col in ["楽曲名", "原曲アーティスト", "作詞", "作曲", "リリース日"]:
+        for col in ["楽曲名", "原曲アーティスト", "作詞1", "作詞2", "作曲1", "作曲2", "編曲1", "編曲2", "リリース日"]:
             streaming[col] = ""
         return streaming[JOINED_COLUMNS]
     merged = streaming.merge(master, on="song_id", how="left")
-    for col in ["楽曲名", "原曲アーティスト", "作詞", "作曲", "リリース日"]:
+    for col in ["楽曲名", "原曲アーティスト", "作詞1", "作詞2", "作曲1", "作曲2", "編曲1", "編曲2", "リリース日"]:
         if col not in merged.columns:
             merged[col] = ""
         merged[col] = merged[col].fillna("").astype(str)
@@ -395,8 +395,12 @@ def page_songs(df: pd.DataFrame):
         df.groupby("楽曲名", as_index=False)
         .agg(
             原曲アーティスト=("原曲アーティスト", lambda x: next((v for v in x if v), "")),
-            作詞=("作詞", lambda x: next((v for v in x if v), "")),
-            作曲=("作曲", lambda x: next((v for v in x if v), "")),
+            作詞1=("作詞1", lambda x: next((v for v in x if v), "")),
+            作詞2=("作詞2", lambda x: next((v for v in x if v), "")),
+            作曲1=("作曲1", lambda x: next((v for v in x if v), "")),
+            作曲2=("作曲2", lambda x: next((v for v in x if v), "")),
+            編曲1=("編曲1", lambda x: next((v for v in x if v), "")),
+            編曲2=("編曲2", lambda x: next((v for v in x if v), "")),
             リリース日=("リリース日", lambda x: next((v for v in x if v), "")),
             歌唱回数=("楽曲名", "count"),
         )
@@ -423,7 +427,7 @@ def page_songs(df: pd.DataFrame):
         )
         fig = px.bar(
             top20, x="歌唱回数", y="楽曲名", orientation="h", text="歌唱回数",
-            hover_data=["原曲アーティスト", "作詞", "作曲"],
+            hover_data=["原曲アーティスト", "作詞1", "作曲1"],
         )
         fig.update_traces(
             marker_color=top20["_c"].tolist(),
