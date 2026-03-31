@@ -52,7 +52,7 @@ export default function StreamsTab({ records }: Props) {
   const hasCollab = records.some((r) => r.コラボ相手様 && r.コラボ相手様 !== 'なし' && r.コラボ相手様 !== '')
 
   return (
-    <div>
+    <div style={{ paddingTop: '35px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
         <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', width: '100%', maxWidth: '360px' }}>
           <span style={{ position: 'absolute', left: '10px', color: '#606060', fontSize: '14px', pointerEvents: 'none' }}>🔍</span>
