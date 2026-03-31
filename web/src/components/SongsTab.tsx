@@ -99,7 +99,7 @@ export default function SongsTab({ records }: Props) {
   ]
 
   return (
-    <div>
+    <div style={{ paddingTop: '35px' }}>
       <div className="songs-table-wrap">
         <table className="songs-table">
           <thead>
