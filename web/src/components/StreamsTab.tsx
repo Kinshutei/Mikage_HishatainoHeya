@@ -186,7 +186,7 @@ function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, set
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                   }} />
-                  <a href={cleanUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', color: '#6b9fd4', display: 'block', marginTop: '4px' }}>
+                  <a href={cleanUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', display: 'block', marginTop: '4px' }}>
                     {t('streams.openYouTube')}
                   </a>
                 </>
@@ -216,9 +216,9 @@ function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, set
                     const hitArtist = query.length > 0 && displayArtist.toLowerCase().includes(q)
                     const isHit = hitTitle || hitArtist
                     return (
-                      <tr key={i} style={isHit ? { backgroundColor: 'rgba(107,159,212,0.12)' } : undefined}>
+                      <tr key={i} style={isHit ? { backgroundColor: 'rgba(172,208,209,0.18)' } : undefined}>
                         <td>{r.歌唱順}</td>
-                        <td style={hitTitle ? { fontWeight: 600, color: '#6b9fd4' } : undefined}>
+                        <td style={hitTitle ? { fontWeight: 600, color: '#3a7a7b' } : undefined}>
                           {(() => {
                             const fa = firstAppearance.get(r.楽曲名)
                             const isFirst = fa?.枠名 === r.枠名 && fa?.歌唱順 === r.歌唱順
@@ -236,7 +236,7 @@ function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, set
                         </td>
                         <td style={{ color: '#aaaaaa', fontSize: '12px' }}>{r.補足情報}</td>
                         <td style={{ color: '#aaaaaa', fontSize: '12px', whiteSpace: 'nowrap' }}>{r.キー}</td>
-                        <td style={{ color: hitArtist ? '#6b9fd4' : '#888888', fontWeight: hitArtist ? 600 : undefined }}>{displayArtist}</td>
+                        <td style={{ color: hitArtist ? '#3a7a7b' : '#888888', fontWeight: hitArtist ? 600 : undefined }}>{displayArtist}</td>
                         {showCollab && (
                           <td style={{ color: '#888888' }}>{r.コラボ相手様 === 'なし' ? '' : r.コラボ相手様}</td>
                         )}
