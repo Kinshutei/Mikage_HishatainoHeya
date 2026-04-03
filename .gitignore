@@ -1,4 +1,6 @@
 .claude/settings.local.json
+.claude/settings.json
+web/public/forDB_01.png
 node_modules/
 web/node_modules/
 web/dist/
