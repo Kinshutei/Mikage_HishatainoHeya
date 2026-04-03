@@ -40,6 +40,9 @@ export default function SongsTab({ records }: Props) {
       return next
     })
   }, [])
+  const CARD_THRESHOLD = 15
+  const CARD_PAGE_SIZE = 50
+  const [cardLimit, setCardLimit] = useState(0)
   const sortedSongs = useMemo(() => sortSongs(songs, sortKey, sortDir), [songs, sortKey, sortDir])
   const top20 = songs.slice(0, 20)
   const [barKey, setBarKey] = useState(0)
@@ -110,27 +113,42 @@ export default function SongsTab({ records }: Props) {
     <div style={{ paddingTop: '35px' }}>
       {/* カード表示（スマホ） */}
       <div className="songs-card-list">
-        {sortedSongs.map((s, i) => (
-          <div
-            key={i}
-            className={`songs-card${openCards.has(i) ? ' open' : ''}`}
-            onClick={() => toggleCard(i)}
-          >
-            <div className="songs-card-top">
-              <span className="songs-card-title-row">
-                <span className="songs-card-title">{s.楽曲名}</span>
-                {s.原曲アーティスト && <span className="songs-card-artist">　{s.原曲アーティスト}</span>}
-              </span>
-              <span className="songs-card-count">{s.歌唱回数}回</span>
-            </div>
-            {s.リリース日 && <div className="songs-card-sub">リリース日：{s.リリース日}</div>}
-            <div className="songs-card-detail">
-              {s.作詞1 && <div className="songs-card-detail-row"><span className="songs-card-detail-label">{t('songs.colLyrics')}</span><span>{s.作詞1}{s.作詞2 ? ` / ${s.作詞2}` : ''}</span></div>}
-              {s.作曲1 && <div className="songs-card-detail-row"><span className="songs-card-detail-label">{t('songs.colCompose')}</span><span>{s.作曲1}{s.作曲2 ? ` / ${s.作曲2}` : ''}</span></div>}
-              {s.編曲1 && <div className="songs-card-detail-row"><span className="songs-card-detail-label">{t('songs.colArrange')}</span><span>{s.編曲1}{s.編曲2 ? ` / ${s.編曲2}` : ''}</span></div>}
-            </div>
-          </div>
-        ))}
+        {(() => {
+          const aboveThreshold = sortedSongs.filter(s => s.歌唱回数 >= CARD_THRESHOLD)
+          const belowThreshold = sortedSongs.filter(s => s.歌唱回数 < CARD_THRESHOLD)
+          const visibleSongs = aboveThreshold.concat(belowThreshold.slice(0, cardLimit))
+          const remaining = belowThreshold.length - cardLimit
+          return (
+            <>
+              {visibleSongs.map((s, i) => (
+                <div
+                  key={s.楽曲名}
+                  className={`songs-card${openCards.has(i) ? ' open' : ''}`}
+                  onClick={() => toggleCard(i)}
+                >
+                  <div className="songs-card-top">
+                    <span className="songs-card-title-row">
+                      <span className="songs-card-title">{s.楽曲名}</span>
+                      {s.原曲アーティスト && <span className="songs-card-artist">　{s.原曲アーティスト}</span>}
+                    </span>
+                    <span className="songs-card-count">{s.歌唱回数}回</span>
+                  </div>
+                  {s.リリース日 && <div className="songs-card-sub">{t('songs.releaseDate')}：{s.リリース日}</div>}
+                  <div className="songs-card-detail">
+                    {s.作詞1 && <div className="songs-card-detail-row"><span className="songs-card-detail-label">{t('songs.colLyrics')}</span><span>{s.作詞1}{s.作詞2 ? ` / ${s.作詞2}` : ''}</span></div>}
+                    {s.作曲1 && <div className="songs-card-detail-row"><span className="songs-card-detail-label">{t('songs.colCompose')}</span><span>{s.作曲1}{s.作曲2 ? ` / ${s.作曲2}` : ''}</span></div>}
+                    {s.編曲1 && <div className="songs-card-detail-row"><span className="songs-card-detail-label">{t('songs.colArrange')}</span><span>{s.編曲1}{s.編曲2 ? ` / ${s.編曲2}` : ''}</span></div>}
+                  </div>
+                </div>
+              ))}
+              {remaining > 0 && (
+                <button className="songs-card-more-btn" onClick={e => { e.stopPropagation(); setCardLimit(l => l + CARD_PAGE_SIZE) }}>
+                  {t('songs.showMore', { count: remaining })}
+                </button>
+              )}
+            </>
+          )
+        })()}
       </div>
 
       {/* テーブル表示（PC） */}
@@ -190,6 +208,7 @@ export default function SongsTab({ records }: Props) {
           xaxis: { showgrid: true, gridcolor: 'rgba(172,208,209,0.35)', zeroline: false, color: '#5a8a8b' },
           margin: { l: 160, r: 55, t: 16, b: 10 },
           height: Math.max(380, top20.length * 26),
+          dragmode: false,
         }}
         config={{ displayModeBar: false, responsive: true, scrollZoom: false }}
         style={{ width: '100%' }}
@@ -227,6 +246,7 @@ export default function SongsTab({ records }: Props) {
               yaxis: { showgrid: true, gridcolor: 'rgba(172,208,209,0.35)', zeroline: false, color: '#5a8a8b' },
               margin: { l: 40, r: 20, t: 24, b: 60 },
               height: 320,
+              dragmode: false,
             }}
             config={{ displayModeBar: false, responsive: true, scrollZoom: false }}
             style={{ width: '100%' }}
@@ -253,7 +273,7 @@ export default function SongsTab({ records }: Props) {
               hovertemplate: '<b>%{label}</b><br>%{value} (%{text})<extra></extra>',
               marker: { colors: artists.map((a) => a.count), colorscale: treeColorscale, line: { width: 2, color: '#ffffff' }, pad: { t: 22, l: 4, r: 4, b: 4 } },
             }]}
-            layout={{ paper_bgcolor: 'rgba(0,0,0,0)', font: { family: 'Noto Sans JP', color: '#1a1a1a' }, margin: { t: 4, l: 0, r: 0, b: 0 }, height: 420 }}
+            layout={{ paper_bgcolor: 'rgba(0,0,0,0)', font: { family: 'Noto Sans JP', color: '#1a1a1a' }, margin: { t: 4, l: 0, r: 0, b: 0 }, height: 420, dragmode: false }}
             config={{ displayModeBar: false, responsive: true, scrollZoom: false }}
             style={{ width: '100%' }}
             useResizeHandler

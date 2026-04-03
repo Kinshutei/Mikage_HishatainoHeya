@@ -42,6 +42,8 @@
     "colCount": "Times Sung",
     "rankingTitle": "Top 20 Most Sung Songs",
     "reset": "Reset",
+    "releaseDate": "Release",
+    "showMore": "Show more (+50)　{{count}} remaining",
     "yearTitle": "Release Year Distribution",
     "artistTitle": "Original Artist Distribution"
   },
@@ -75,6 +77,16 @@
   "changelog": {
     "title": "Changelog",
     "entries": [
+      {
+        "date": "2026-04-03",
+        "items": [
+          "Mobile improvements. Changed the expand/collapse buttons in LiveStreaming Info to ▼ OPEN / ▲ CLOSE to prevent layout issues on mobile.",
+          "Mobile improvements. Uta-Mita DB song list now displays in card format. Song title, artist, and sing count are shown in one line; tap to expand lyrics/composer/arranger details.",
+          "Mobile improvements. Cards initially show songs sung 15+ times; tap 'Show more' to load 50 additional songs at a time.",
+          "Mobile improvements. Disabled unintentional zoom and pan on graphs triggered by touch gestures.",
+          "Mobile improvements. Adjusted footer bar height and font size for a tighter fit."
+        ]
+      },
       {
         "date": "2026-03-23",
         "items": [

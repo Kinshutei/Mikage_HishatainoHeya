@@ -420,6 +420,18 @@ a:hover { color: #1a5a5b; }
   .songs-card.open .songs-card-detail { display: block; }
   .songs-card-detail-row { display: flex; gap: 6px; margin-bottom: 2px; }
   .songs-card-detail-label { color: #aaa; min-width: 32px; }
+  .songs-card-more-btn {
+    width: 100%;
+    padding: 10px;
+    background: rgba(172,208,209,0.2);
+    border: 1px solid #cce0e0;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    color: #3a7a7b;
+    cursor: pointer;
+    text-align: center;
+  }
 }
 
 @media (max-width: 640px) {
@@ -432,4 +444,14 @@ a:hover { color: #1a5a5b; }
     line-height: 1.4;
   }
   .footer-icons { display: none; }
+  footer {
+    height: 36px !important;
+  }
+  .main-wrapper {
+    margin-bottom: 36px;
+    min-height: calc(100vh - 36px);
+  }
+  .sidebar {
+    height: calc(100vh - 36px);
+  }
 }
