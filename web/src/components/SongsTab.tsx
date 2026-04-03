@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 const MIKAGE_ICON = `${import.meta.env.BASE_URL}icon_mikage.png`
@@ -32,6 +32,14 @@ export default function SongsTab({ records }: Props) {
   const songs: SongStat[] = useMemo(() => aggregateSongs(records), [records])
   const [sortKey, setSortKey] = useState<SortKey>('歌唱回数')
   const [sortDir, setSortDir] = useState<SortDir>('desc')
+  const [openCards, setOpenCards] = useState<Set<number>>(new Set())
+  const toggleCard = useCallback((i: number) => {
+    setOpenCards(prev => {
+      const next = new Set(prev)
+      next.has(i) ? next.delete(i) : next.add(i)
+      return next
+    })
+  }, [])
   const sortedSongs = useMemo(() => sortSongs(songs, sortKey, sortDir), [songs, sortKey, sortDir])
   const top20 = songs.slice(0, 20)
   const [barKey, setBarKey] = useState(0)
@@ -100,6 +108,32 @@ export default function SongsTab({ records }: Props) {
 
   return (
     <div style={{ paddingTop: '35px' }}>
+      {/* カード表示（スマホ） */}
+      <div className="songs-card-list">
+        {sortedSongs.map((s, i) => (
+          <div
+            key={i}
+            className={`songs-card${openCards.has(i) ? ' open' : ''}`}
+            onClick={() => toggleCard(i)}
+          >
+            <div className="songs-card-top">
+              <span className="songs-card-title-row">
+                <span className="songs-card-title">{s.楽曲名}</span>
+                {s.原曲アーティスト && <span className="songs-card-artist">　{s.原曲アーティスト}</span>}
+              </span>
+              <span className="songs-card-count">{s.歌唱回数}回</span>
+            </div>
+            {s.リリース日 && <div className="songs-card-sub">リリース日：{s.リリース日}</div>}
+            <div className="songs-card-detail">
+              {s.作詞1 && <div className="songs-card-detail-row"><span className="songs-card-detail-label">{t('songs.colLyrics')}</span><span>{s.作詞1}{s.作詞2 ? ` / ${s.作詞2}` : ''}</span></div>}
+              {s.作曲1 && <div className="songs-card-detail-row"><span className="songs-card-detail-label">{t('songs.colCompose')}</span><span>{s.作曲1}{s.作曲2 ? ` / ${s.作曲2}` : ''}</span></div>}
+              {s.編曲1 && <div className="songs-card-detail-row"><span className="songs-card-detail-label">{t('songs.colArrange')}</span><span>{s.編曲1}{s.編曲2 ? ` / ${s.編曲2}` : ''}</span></div>}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* テーブル表示（PC） */}
       <div className="songs-table-wrap">
         <table className="songs-table">
           <thead>
