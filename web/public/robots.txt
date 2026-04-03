@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kinshutei.github.io/Mikage_HishatainoHeya/sitemap.xml
