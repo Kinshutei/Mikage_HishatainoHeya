@@ -45,7 +45,8 @@
     "releaseDate": "Release",
     "showMore": "Show more (+50)　{{count}} remaining",
     "yearTitle": "Release Year Distribution",
-    "artistTitle": "Original Artist Distribution"
+    "artistTitle": "Original Artist Distribution",
+    "totalCount": "※Total songs: {{count}}"
   },
   "about": {
     "siteTitle": "About This Site",

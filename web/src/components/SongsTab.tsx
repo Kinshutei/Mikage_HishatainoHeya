@@ -183,6 +183,10 @@ export default function SongsTab({ records }: Props) {
         </table>
       </div>
 
+      <div style={{ fontSize: '0.82rem', color: '#888', marginTop: '6px', marginBottom: '16px', textAlign: 'right' }}>
+        {t('songs.totalCount', { count: songs.length })}
+      </div>
+
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
         <h3 style={{ color: '#555', margin: 0 }}>{t('songs.rankingTitle')}</h3>
         <button className="btn-secondary" onClick={() => setBarKey((k) => k + 1)}><img src={MIKAGE_ICON} alt="" style={{ height: 16, width: 16, objectFit: "contain", verticalAlign: "middle", marginRight: 5, filter: "invert(1) opacity(0.5)" }} />{t('songs.reset')}</button>

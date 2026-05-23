@@ -45,7 +45,8 @@
     "releaseDate": "リリース日",
     "showMore": "さらに表示（50曲分表示を追加）　あと{{count}}曲",
     "yearTitle": "リリース年度分布",
-    "artistTitle": "原曲アーティスト分布"
+    "artistTitle": "原曲アーティスト分布",
+    "totalCount": "※総曲数 {{count}} 曲"
   },
   "about": {
     "siteTitle": "このサイトについて",

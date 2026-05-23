@@ -45,7 +45,8 @@
     "releaseDate": "發行日",
     "showMore": "顯示更多（+50）　剩餘 {{count}} 首",
     "yearTitle": "發行年份分布",
-    "artistTitle": "原曲藝術家分布"
+    "artistTitle": "原曲藝術家分布",
+    "totalCount": "※總曲數：{{count}} 首"
   },
   "about": {
     "siteTitle": "關於本站",

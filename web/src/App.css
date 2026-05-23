@@ -278,7 +278,6 @@ body {
   overflow-x: auto;
   overflow-y: auto;
   max-height: calc(25 * 38px + 42px);
-  margin-bottom: 32px;
   border: 1px solid #cce0e0;
   border-radius: 6px;
   background: rgba(255,255,255,0.5);

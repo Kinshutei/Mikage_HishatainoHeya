@@ -45,7 +45,8 @@
     "releaseDate": "발매일",
     "showMore": "더 보기（+50）　나머지 {{count}}곡",
     "yearTitle": "발매 연도 분포",
-    "artistTitle": "원곡 아티스트 분포"
+    "artistTitle": "원곡 아티스트 분포",
+    "totalCount": "※총 곡 수: {{count}}곡"
   },
   "about": {
     "siteTitle": "이 사이트에 대하여",
