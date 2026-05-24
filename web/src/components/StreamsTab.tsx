@@ -195,7 +195,7 @@ function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, set
               )}
             </div>
 
-            <div style={{ overflowX: 'auto' }}>
+            <div style={{ overflowX: 'auto' }} className="setlist-table-wrap">
               <table className="setlist-table">
                 <thead>
                   <tr>
@@ -252,6 +252,46 @@ function StreamExpander({ label, forceOpen, defaultOpen, thumbUrl, cleanUrl, set
                   })}
                 </tbody>
               </table>
+            </div>
+
+            <div className="setlist-card-list">
+              {setlist.map((r, i) => {
+                const displayTitle  = r.楽曲名
+                const displayArtist = r.原曲Artist
+                const hitTitle  = query.length > 0 && displayTitle.toLowerCase().includes(q)
+                const hitArtist = query.length > 0 && displayArtist.toLowerCase().includes(q)
+                const isHit = hitTitle || hitArtist
+                const fa = firstAppearance.get(r.楽曲名)
+                const isFirst = fa?.枠名 === r.枠名 && fa?.歌唱順 === r.歌唱順
+                return (
+                  <div key={i} className={`setlist-card${isHit ? ' setlist-card--hit' : ''}`}>
+                    <div className="setlist-card-row1">
+                      <span className="setlist-card-no">{r.歌唱順}</span>
+                      <span className="setlist-card-title" style={hitTitle ? { color: '#3a7a7b', fontWeight: 600 } : undefined}>
+                        {isFirst && <span className="setlist-card-first-badge">{t('streams.firstBadge')}</span>}
+                        {displayTitle}
+                        {displayArtist && (
+                          <span className="setlist-card-artist" style={hitArtist ? { color: '#3a7a7b', fontWeight: 600 } : undefined}>
+                            {' '}/ {displayArtist}
+                          </span>
+                        )}
+                      </span>
+                      {r.枠URL && (
+                        <a href={r.枠URL} target="_blank" rel="noopener noreferrer" className="setlist-card-link">▶</a>
+                      )}
+                    </div>
+                    {(r.補足情報 || r.キー || (showCollab && r.コラボ相手様 && r.コラボ相手様 !== 'なし' && r.コラボ相手様 !== '')) && (
+                      <div className="setlist-card-row2">
+                        {r.補足情報 && <span><span className="setlist-card-meta-label">{t('streams.colNote')}</span>{r.補足情報}</span>}
+                        {r.キー && <span><span className="setlist-card-meta-label">{t('streams.colKey')}</span>{r.キー}</span>}
+                        {showCollab && r.コラボ相手様 && r.コラボ相手様 !== 'なし' && r.コラボ相手様 !== '' && (
+                          <span><span className="setlist-card-meta-label">{t('streams.colCollab')}</span>{r.コラボ相手様}</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
             </div>
           </div>
         </div>
